@@ -44,8 +44,8 @@ namespace Actors.Client.Test
             await actorRef1.Increment();
             await actorRef2.Increment();
 
-            Assert.AreEqual(2, await actorRef2.GetValue());
             Assert.AreEqual(2, await actorRef1.GetValue());
+            Assert.AreEqual(2, await actorRef2.GetValue());
             Assert.AreEqual(await actorRef1.GetValue(), await actorRef2.GetValue());
         }
     }

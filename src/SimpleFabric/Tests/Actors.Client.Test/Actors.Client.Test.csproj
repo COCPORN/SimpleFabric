@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="InMemoryRegistryTest.cs" />
     <Compile Include="SimpleActorProxyTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransientStateTest.cs" />

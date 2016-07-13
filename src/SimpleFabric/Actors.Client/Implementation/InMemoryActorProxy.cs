@@ -39,24 +39,34 @@ namespace SimpleFabric.Actors.Client.Implementation
                         createType = typeToCreate.First();
                     }
 
-                    var t_actor = Activator.CreateInstance(createType);
-                    var iactor = t_actor as IActor;
-                    var cactor = t_actor as Actor;
-                    if (t_actor != null && iactor == null)
-                    {
-                        throw new InvalidOperationException("The actor class needs to implement IActor-interface");
-                    }
-                    if (cactor == null)
-                    {
-                        throw new InvalidOperationException("The actor class needs to derive from the SimpleFabric.Actors.Runtime.Actor class");
-                    }
-                    if (iactor == null) throw new Exception("Internal error: Failed to create Actor");
+                    IActor iactor;
+                    Actor cactor;
+                    CreateActor(createType, out iactor, out cactor);
+
                     cactor.Id = ActorId;
                     actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), iactor);
                     actor = iactor;
                 }
             }
         }
+
+        private static void CreateActor(Type createType, out IActor iactor, out Actor cactor)
+        {
+            var t_actor = Activator.CreateInstance(createType);
+
+            iactor = t_actor as IActor;
+            cactor = t_actor as Actor;
+            if (t_actor == null) throw new InvalidOperationException("Internal error: Failed to create Actor");
+            if (iactor == null)
+            {
+                throw new InvalidOperationException("The actor class needs to implement IActor-interface");
+            }
+            if (cactor == null)
+            {
+                throw new InvalidOperationException("The actor class needs to derive from the SimpleFabric.Actors.Runtime.Actor class");
+            }
+        }
+
         static Dictionary<Type, Type> interfaceMapping = new Dictionary<Type, Type>();
         static Dictionary<Tuple<ActorId, string>, IActor> actorRegistry = new Dictionary<Tuple<ActorId, string>, IActor>();
 
