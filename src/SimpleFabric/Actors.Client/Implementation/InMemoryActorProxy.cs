@@ -12,7 +12,7 @@ namespace SimpleFabric.Actors.Client.Implementation
     public class InMemoryActorProxy<T> : DynamicObject, IActor, IActorProxyImplementation
     {
         public ActorId ActorId { get; set; }
-
+        public string ApplicationName { get; set; }
         IActor actor;
 
         public void Initialize()
@@ -20,7 +20,7 @@ namespace SimpleFabric.Actors.Client.Implementation
             // TODO: This is gross and ineffient, rewrite locking 
             lock (actorRegistry)
             {
-                if (actorRegistry.TryGetValue(ActorId, out actor) == false)
+                if (actorRegistry.TryGetValue(Tuple.Create(ActorId, ApplicationName), out actor) == false)
                 {
                     // Create new actor instance and add it to registry
                     var type = typeof(T);
@@ -39,7 +39,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                         createType = typeToCreate.First();
                     }
 
-                    var t_actor = Activator.CreateInstance(createType);
+                    var t_actor = Activator.CreateInstance(createType, ActorId);
                     var iactor = t_actor as IActor;
                     var cactor = t_actor as Actor;
                     if (t_actor != null && iactor == null)
@@ -51,13 +51,14 @@ namespace SimpleFabric.Actors.Client.Implementation
                         throw new InvalidOperationException("The actor class needs to derive from the SimpleFabric.Actors.Runtime.Actor class");
                     }
                     if (iactor == null) throw new Exception("Internal error: Failed to create Actor");
-                    actorRegistry.Add(ActorId, iactor);
+                    cactor.Id = ActorId;
+                    actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), iactor);
                     actor = iactor;
                 }
             }
         }
         static Dictionary<Type, Type> interfaceMapping = new Dictionary<Type, Type>();
-        static Dictionary<ActorId, IActor> actorRegistry = new Dictionary<ActorId, IActor>();
+        static Dictionary<Tuple<ActorId, string>, IActor> actorRegistry = new Dictionary<Tuple<ActorId, string>, IActor>();
 
         // TODO: This method needs to honor service fabric reentrancy rules, this implementation
         // is naive and will easily cause deadlocks

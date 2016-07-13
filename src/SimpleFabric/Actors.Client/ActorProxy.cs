@@ -27,7 +27,7 @@ namespace SimpleFabric.Actors.Client
             set { ProxyFactory.ActorProxyType = value; }
         }
 
-        public static T Create<T>(ActorId actorId) where T : class
+        public static T Create<T>(ActorId actorId, string applicationName = null) where T : class
         {
             if (typeof(T).IsInterface == false)
             {
@@ -37,6 +37,7 @@ namespace SimpleFabric.Actors.Client
             var proxy = ProxyFactory.CreateProxy<T>();
 
             proxy.ActorId = actorId;
+            proxy.ApplicationName = applicationName;
             proxy.Initialize();
             return proxy.ActLike<T>();
         }

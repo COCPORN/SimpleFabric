@@ -10,6 +10,7 @@ namespace SimpleFabric.Actors.Client.Implementation
     interface IActorProxyImplementation
     {
         ActorId ActorId { get; set; }
+        string ApplicationName { get; set; }
         void Initialize();
     }
 }

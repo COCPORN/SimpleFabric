@@ -8,9 +8,24 @@ namespace SimpleFabric.Actors.Runtime
 {
     public abstract class ActorBase
     {
+        
+        public string ApplicationName { get; set; }
 
-        public string ApplicationName { get; }
-        public ActorId Id { get; }
+        // Not sure how to implement this elegantly
+        // without incurring constructor chaining,
+        // TODO: Consider looking at this later
+        bool actorIdSet = false;
+        ActorId id;
+        public ActorId Id
+        {
+            get { return id; }
+            set
+            {
+                if (actorIdSet == true) throw new InvalidOperationException("ActorId already set");
+                actorIdSet = true;
+                id = value;
+            }
+        }
         //
         // Summary:
         //     Gets the event for the specified event interface.
@@ -151,7 +166,7 @@ namespace SimpleFabric.Actors.Runtime
         //     When the specified reminder is not registered with actor.
         //[AsyncStateMachine(typeof(< UnregisterReminderAsync > d__0))]
         //[DebuggerStepThrough]
-        protected Task UnregisterReminderAsync(IActorReminder reminder) { throw new NotImplementedException();  }
+        protected Task UnregisterReminderAsync(IActorReminder reminder) { throw new NotImplementedException(); }
         //
         // Summary:
         //     Unregisters a Timer previously set on this actor.
@@ -159,7 +174,7 @@ namespace SimpleFabric.Actors.Runtime
         // Parameters:
         //   timer:
         //     IActorTimer representing timer that needs to be unregistered..
-        protected void UnregisterTimer(IActorTimer timer) { throw new NotImplementedException();  }
+        protected void UnregisterTimer(IActorTimer timer) { throw new NotImplementedException(); }
 
     }
 }
