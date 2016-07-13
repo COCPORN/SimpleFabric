@@ -49,20 +49,20 @@ namespace Actors.Client.Test
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestUnimplementedActor()
         {
-            var unimplementedActor = ActorProxy.Create<IUnimplementedActor>(new ActorId());
+            var unimplementedActor = ActorProxy.Create<IUnimplementedActor>(new ActorId("Test"));
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestInterfaceMissingIActorMarkerInterface()
         {
-            var badInterface = ActorProxy.Create<IBadInterface>(new ActorId());
+            var badInterface = ActorProxy.Create<IBadInterface>(new ActorId("Test"));
         }
 
         [TestMethod]
         public void TestSuccessfulActorCreation()
         {
-            var actorProxy = ActorProxy.Create<ITestActor>(new ActorId());
+            var actorProxy = ActorProxy.Create<ITestActor>(new ActorId("Test"));
             var response = actorProxy.Hello("World");
             Assert.AreEqual("Hello: World", response.Result);
         }
