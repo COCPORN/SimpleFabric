@@ -19,7 +19,7 @@ namespace SimpleFabric.Actors.Client.Implementation
             // TODO: This is gross and ineffient, rewrite locking 
             lock (actorRegistry)
             {
-                if (actorRegistry.TryGetValue(ActorId.GetHashCode(), out actor) == false)
+                if (actorRegistry.TryGetValue(ActorId, out actor) == false)
                 {
                     // Create new actor instance and add it to registry
                     var type = typeof(T);
@@ -45,13 +45,13 @@ namespace SimpleFabric.Actors.Client.Implementation
                         throw new InvalidOperationException("The actor class needs to implement IActor-interface");
                     }
                     if (iactor == null) throw new Exception("Internal error: Failed to create Actor");
-                    actorRegistry.Add(ActorId.GetHashCode(), iactor);
+                    actorRegistry.Add(ActorId, iactor);
                     actor = iactor;
                 }
             }
         }
         static Dictionary<Type, Type> interfaceMapping = new Dictionary<Type, Type>();
-        static Dictionary<int, IActor> actorRegistry = new Dictionary<int, IActor>();
+        static Dictionary<ActorId, IActor> actorRegistry = new Dictionary<ActorId, IActor>();
 
         // TODO: This method needs to honor service fabric reentrancy rules, this implementation
         // is naive and will easily cause deadlocks
