@@ -6,26 +6,34 @@ using SimpleFabric.Actors.Client;
 
 namespace Actors.Client.Test
 {
-    public interface IUnimplementedActor
-    {
+    /// <summary>
+    /// This interface cannot be instantiated because it
+    /// doesn't have an implementing class
+    /// </summary>
+    public interface IUnimplementedActor { }
 
-    }
+    /// <summary>
+    /// This interface is bad, because it doesn't derive
+    /// from IActor
+    /// </summary>
+    public interface IBadInterface { }
+    
+    /// <summary>
+    /// So this implementation won't help
+    /// </summary>
+    public class TestBadInterface : IBadInterface { }
 
-    public interface IBadInterface
-    {
-
-    }
-
-    public class TestBadInterface : IBadInterface
-    {
-
-    }
-
+    /// <summary>
+    /// This is a well-formed actor interface
+    /// </summary>
     public interface ITestActor : IActor
     {
         Task<string> Hello(string world); 
     }
 
+    /// <summary>
+    /// And this is a simple implementation of it
+    /// </summary>
     public class TestActor : ITestActor
     {
         public Task<string> Hello(string world)
