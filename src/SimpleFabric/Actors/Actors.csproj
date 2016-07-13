@@ -7,7 +7,7 @@
     <ProjectGuid>{C6BDAA8D-9EDA-47A1-A7D3-17D8DD32C513}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Actors</RootNamespace>
+    <RootNamespace>SimpleFabric.Actors</RootNamespace>
     <AssemblyName>Actors</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -44,7 +44,12 @@
     <Compile Include="ActorIdKind.cs" />
     <Compile Include="IActor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\ActorBase.cs" />
+    <Compile Include="Runtime\ActorCallType.cs" />
+    <Compile Include="Runtime\ActorMethodContext.cs" />
+    <Compile Include="Runtime\IActorReminder.cs" />
     <Compile Include="Runtime\IActorStateManager.cs" />
+    <Compile Include="Runtime\IActorTimer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj">
