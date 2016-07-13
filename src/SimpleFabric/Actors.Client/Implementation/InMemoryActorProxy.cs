@@ -30,11 +30,18 @@ namespace SimpleFabric.Actors.Client.Implementation
                     {
                         var typeToCreate = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(s => s.GetTypes())
-                                .Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract && !p.IsInterface);
+                                .Where(p => type.IsAssignableFrom(p) 
+                                            && p.IsClass 
+                                            && !p.IsAbstract 
+                                            && !p.IsInterface 
+                                            && p.IsSubclassOf(typeof(Actor)));
                         if (typeToCreate.Count() == 0)
                         {
                             throw new InvalidOperationException("The type " + type.Name + " has no implementation");
                         }
+
+
+
                         interfaceMapping.Add(type, typeToCreate.First());
                         createType = typeToCreate.First();
                     }

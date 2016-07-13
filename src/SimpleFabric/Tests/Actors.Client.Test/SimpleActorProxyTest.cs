@@ -33,6 +33,18 @@ namespace Actors.Client.Test
     }
 
     /// <summary>
+    /// While this forgets to derive from Actor
+    /// </summary>
+    public class BadTestActor : ITestActor
+    {
+        public Task<string> Hello(string world)
+        {
+            return Task.FromResult("Hello: " + world);
+        }
+    }
+
+
+    /// <summary>
     /// And this is a simple implementation of it
     /// </summary>
     public class TestActor : Actor, ITestActor
@@ -43,6 +55,7 @@ namespace Actors.Client.Test
         }
     }
 
+  
     [TestClass]
     public class SimpleActorProxyTest
     {
@@ -67,5 +80,6 @@ namespace Actors.Client.Test
             var response = actorProxy.Hello("World");
             Assert.AreEqual("Hello: World", response.Result);
         }
+
     }
 }
