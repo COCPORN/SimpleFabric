@@ -29,10 +29,11 @@ namespace SimpleFabric.Actors.Client
                 throw new ArgumentException("T must be an interface");
             }
 
-            var inMemoryActorProxy = new InMemoryActorProxy<T>();
-            inMemoryActorProxy.ActorId = actorId;
-            inMemoryActorProxy.Initialize();
-            return inMemoryActorProxy.ActLike<T>();
+            var proxy = ProxyFactory.CreateProxy<T>();
+            
+            proxy.ActorId = actorId;
+            proxy.Initialize();
+            return proxy.ActLike<T>();
         }
        
     }

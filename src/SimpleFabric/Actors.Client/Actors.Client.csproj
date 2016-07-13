@@ -48,6 +48,7 @@
     <Compile Include="IActorProxyImplementation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InMemoryActorProxy.cs" />
+    <Compile Include="ProxyFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Actors\Actors.csproj">
