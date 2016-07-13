@@ -30,14 +30,23 @@ namespace SimpleFabric.Actors.Client.Implementation
                         var typeToCreate = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(s => s.GetTypes())
                                 .Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract && !p.IsInterface);
-
+                        if (typeToCreate.Count() == 0)
+                        {
+                            throw new InvalidOperationException("The type " + type.Name + " has no implementation");
+                        }
                         interfaceMapping.Add(type, typeToCreate.First());
                         createType = typeToCreate.First();
                     }
 
-                    var actor = Activator.CreateInstance(createType) as IActor;
-                    if (actor == null) throw new Exception("Internal error: Failed to create Actor");
-                    actorRegistry.Add(ActorId, actor);
+                    var t_actor = Activator.CreateInstance(createType);
+                    var iactor = t_actor as IActor;
+                    if (t_actor != null && iactor == null)
+                    {
+                        throw new InvalidOperationException("The actor class needs to implement IActor-interface");
+                    }
+                    if (iactor == null) throw new Exception("Internal error: Failed to create Actor");
+                    actorRegistry.Add(ActorId, iactor);
+                    actor = iactor;
                 }
             }
         }
@@ -51,8 +60,9 @@ namespace SimpleFabric.Actors.Client.Implementation
             {
                 result = actor.GetType().GetMethod(binder.Name).Invoke(actor, args);
                 return true;
-            } catch
+            } catch (Exception ex)
             {
+                ;
                 result = null;
                 return false;
             }
