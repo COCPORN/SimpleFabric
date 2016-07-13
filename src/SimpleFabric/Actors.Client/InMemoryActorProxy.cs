@@ -53,20 +53,23 @@ namespace SimpleFabric.Actors.Client.Implementation
         static Dictionary<Type, Type> interfaceMapping = new Dictionary<Type, Type>();
         static Dictionary<ActorId, IActor> actorRegistry = new Dictionary<ActorId, IActor>();
 
-        // TODO: This method needs to single thread access to actors
+        // TODO: This method needs to honor service fabric reentrancy rules, this implementation
+        // is naive and will easily cause deadlocks
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
             try
             {
-                result = actor.GetType().GetMethod(binder.Name).Invoke(actor, args);
+                lock (actor)
+                {
+                    result = actor.GetType().GetMethod(binder.Name).Invoke(actor, args);
+                }
                 return true;
-            } catch (Exception ex)
-            {
-                ;
+            }
+            catch
+            {                
                 result = null;
                 return false;
-            }
-            
+            }            
         }
     }
 }
