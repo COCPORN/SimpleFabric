@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using SimpleFabric.Actors;
 using SimpleFabric.Actors.Client;
+using SimpleFabric.Actors.Runtime;
 
 namespace Actors.Client.Test
 {
@@ -34,7 +35,7 @@ namespace Actors.Client.Test
     /// <summary>
     /// And this is a simple implementation of it
     /// </summary>
-    public class TestActor : ITestActor
+    public class TestActor : Actor, ITestActor
     {
         public Task<string> Hello(string world)
         {

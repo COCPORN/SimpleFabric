@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpleFabric.Actors;
 using SimpleFabric.Actors.Client;
+using SimpleFabric.Actors.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Actors.Client.Test
         Task<int> GetValue();
     }
 
-    public class IncrementActor : IIncrementActor
+    public class IncrementActor : Actor, IIncrementActor
     {
         int i = 0;
 

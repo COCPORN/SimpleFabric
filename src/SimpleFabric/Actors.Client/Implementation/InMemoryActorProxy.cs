@@ -1,4 +1,5 @@
 ﻿using SimpleFabric.Actors;
+using SimpleFabric.Actors.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -40,9 +41,14 @@ namespace SimpleFabric.Actors.Client.Implementation
 
                     var t_actor = Activator.CreateInstance(createType);
                     var iactor = t_actor as IActor;
+                    var cactor = t_actor as Actor;
                     if (t_actor != null && iactor == null)
                     {
                         throw new InvalidOperationException("The actor class needs to implement IActor-interface");
+                    }
+                    if (cactor == null)
+                    {
+                        throw new InvalidOperationException("The actor class needs to derive from the SimpleFabric.Actors.Runtime.Actor class");
                     }
                     if (iactor == null) throw new Exception("Internal error: Failed to create Actor");
                     actorRegistry.Add(ActorId, iactor);
