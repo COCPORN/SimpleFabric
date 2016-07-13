@@ -8,9 +8,18 @@ namespace SimpleFabric.Actors.Client.Implementation
 {
     class ProxyFactory
     {
+        public static ActorProxyType ActorProxyType { get; set; } = ActorProxyType.InMemoryActorProxy;
+
         public static IActorProxyImplementation CreateProxy<T>()
         {
-            return new InMemoryActorProxy<T>();
+            switch (ActorProxyType)
+            {
+                case ActorProxyType.InMemoryActorProxy:
+                    return new InMemoryActorProxy<T>();
+                default:
+                    throw new InvalidOperationException("Unknown actor proxy type");
+            }
+            
         }
     }
 }

@@ -21,6 +21,11 @@ namespace SimpleFabric.Actors.Client
 
     public abstract class ActorProxy
     {
+        public static ActorProxyType ActorProxyType
+        {
+            get { return ProxyFactory.ActorProxyType; }
+            set { ProxyFactory.ActorProxyType = value; }
+        }
 
         public static T Create<T>(ActorId actorId) where T : class
         {
@@ -30,11 +35,11 @@ namespace SimpleFabric.Actors.Client
             }
 
             var proxy = ProxyFactory.CreateProxy<T>();
-            
+
             proxy.ActorId = actorId;
             proxy.Initialize();
             return proxy.ActLike<T>();
         }
-       
+
     }
 }
