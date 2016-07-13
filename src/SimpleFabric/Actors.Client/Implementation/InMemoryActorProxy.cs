@@ -39,7 +39,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                         createType = typeToCreate.First();
                     }
 
-                    var t_actor = Activator.CreateInstance(createType, ActorId);
+                    var t_actor = Activator.CreateInstance(createType);
                     var iactor = t_actor as IActor;
                     var cactor = t_actor as Actor;
                     if (t_actor != null && iactor == null)
