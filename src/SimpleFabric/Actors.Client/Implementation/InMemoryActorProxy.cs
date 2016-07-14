@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SimpleFabric.Actors.Client.Implementation
@@ -81,16 +82,61 @@ namespace SimpleFabric.Actors.Client.Implementation
         static Dictionary<Type, Type> interfaceMapping = new Dictionary<Type, Type>();
         static Dictionary<Tuple<ActorId, string>, IActor> actorRegistry = new Dictionary<Tuple<ActorId, string>, IActor>();
 
+        #region Locking
+        
+        // Because locking and unlocking are potentially
+        // done on separate threads, these are implemented
+        // with a cross thread event
+
+        AutoResetEvent are = new AutoResetEvent(true);
+
+        void Lock()
+        {
+            are.WaitOne();
+        }
+
+        void Unlock()
+        {
+            are.Set();
+        }
+        #endregion    
+
         // TODO: This method needs to honor service fabric reentrancy rules, this implementation
         // is naive and will easily cause deadlocks
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
             try
             {
-                lock (actor)
+                
+                var method = actor.GetType().GetMethod(binder.Name);
+
+#if false
+                // For some reason this doesn't work for Task with generic
+                if (method.ReturnType != typeof(Task) 
+                    && method.ReturnType != typeof(Task<>))
                 {
-                    result = actor.GetType().GetMethod(binder.Name).Invoke(actor, args);
+                    throw new InvalidOperationException("All interface methods must be Task or Task<T>");
                 }
+#endif
+
+                // "lock" the actor
+                Lock();
+                result = method.Invoke(actor, args);
+
+                var task = result as Task;
+                if (task == null)
+                {
+                    // "unlock" the actor as this call will not be completed 
+                    // The test on the return 
+                    Unlock();
+                    throw new InvalidOperationException("All interface methods must be Task or Task<T>");
+                }
+
+                task.ContinueWith((_) =>
+                {
+                    Unlock();
+                });
+
                 return true;
             }
             catch
