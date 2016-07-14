@@ -27,35 +27,40 @@ namespace SimpleFabric.Actors.Client.Implementation
             {
                 // Create new actor instance and add it to registry
                 var type = typeof(T);
-                Type createType = null;
+                Type typeToCreate = null;
 
-                if (interfaceMapping.TryGetValue(type, out createType) == false)
+                if (interfaceMapping.TryGetValue(type, out typeToCreate) == false)
                 {
-                    var typeToCreate = AppDomain.CurrentDomain.GetAssemblies()
+                    var typesToCreate = AppDomain.CurrentDomain.GetAssemblies()
                             .SelectMany(s => s.GetTypes())
                             .Where(p => type.IsAssignableFrom(p) 
                                         && p.IsClass 
                                         && !p.IsAbstract 
                                         && !p.IsInterface 
                                         && p.IsSubclassOf(typeof(Actor)));
-                    var createCount = typeToCreate.Count();
+                    var createCount = typesToCreate.Count();
 
                     if (createCount == 0)
                     {
-                        throw new InvalidOperationException("The type " + type.Name + " has no implementation");
+                        throw new InvalidOperationException("The type " 
+                        	+ type.Name + " has no implementation");
                     }
                     if (createCount > 1)
                     {
-                        throw new InvalidOperationException("The interface " + type.Name + " has multiple implementations and instantiation is ambiguous. Make sure there is a single implementation in the current AppDomain");
+                        throw new InvalidOperationException("The interface " 
+                        	+ type.Name + 
+                        	" has multiple implementations and instantiation is ambiguous." + 
+                        	" Make sure there is a single implementation in the current AppDomain");
                     }
                     
-                    interfaceMapping.Add(type, typeToCreate.Single());
-                    createType = typeToCreate.First();
+                    typeToCreate = typesToCreate.Single();
+
+                    interfaceMapping.Add(type, typeToCreate);                    
                 }
 
                 IActor iactor;
                 Actor cactor;
-                CreateActor(createType, out iactor, out cactor);
+                CreateActor(typeToCreate, out iactor, out cactor);
 
                 cactor.Id = ActorId;
                 lock (actorRegistry) 
@@ -67,13 +72,15 @@ namespace SimpleFabric.Actors.Client.Implementation
         }
         
 
-        private static void CreateActor(Type createType, out IActor iactor, out Actor cactor)
+        private static void CreateActor(Type typeToCreate, out IActor iactor, out Actor cactor)
         {
-            var t_actor = Activator.CreateInstance(createType);
+            var t_actor = Activator.CreateInstance(typeToCreate);
 
             iactor = t_actor as IActor;
             cactor = t_actor as Actor;
-            if (t_actor == null) throw new InvalidOperationException("Internal error: Failed to create Actor");
+            if (t_actor == null) {
+	            throw new InvalidOperationException("Internal error: Failed to create Actor");
+	        }
             if (iactor == null)
             {
                 throw new InvalidOperationException("The actor class needs to implement IActor-interface");
