@@ -18,6 +18,6 @@ namespace SimpleFabric.Data
         }
 
         public bool HasValue { get { return hasValue; } }
-        public TValue Value {  get { return value; } }
+        public TValue Value { get { return value; } }
     }
 }
