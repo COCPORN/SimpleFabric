@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="InMemoryActorStateManagerTest.cs" />
     <Compile Include="InMemoryRegistryTest.cs" />
     <Compile Include="SimpleActorProxyTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +64,10 @@
     <ProjectReference Include="..\..\Actors\Actors.csproj">
       <Project>{c6bdaa8d-9eda-47a1-a7d3-17d8dd32c513}</Project>
       <Name>Actors</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Data\Data.csproj">
+      <Project>{65baa2f9-a4b1-4cfe-882a-f81ae9c93550}</Project>
+      <Name>Data</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

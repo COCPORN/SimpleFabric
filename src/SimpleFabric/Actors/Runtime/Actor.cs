@@ -13,6 +13,7 @@ namespace SimpleFabric.Actors.Runtime
             {
                 throw new InvalidOperationException("Unable to create actor without StateManagerCreator set");
             }
+            StateManager = StateManagerCreator();
         }
 
         public static Func<IActorStateManager> StateManagerCreator { get; set; }

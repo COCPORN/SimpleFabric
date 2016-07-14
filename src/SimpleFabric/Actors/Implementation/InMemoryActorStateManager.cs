@@ -19,7 +19,8 @@ namespace SimpleFabric.Actors.Implementation
             object value;
             if (state.TryGetValue(stateName, out value))
             {
-                updateValueFactory(stateName, (T)value);
+                var newState = updateValueFactory(stateName, (T)value);
+                state[stateName] = newState;
             }
             else
             {
