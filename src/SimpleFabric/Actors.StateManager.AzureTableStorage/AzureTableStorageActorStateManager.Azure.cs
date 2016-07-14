@@ -10,7 +10,6 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
 {
     public partial class AzureTableStorageActorStateManager
     {
-        #region Azure calls
         public async Task<T> GetAsync<T>(string partitionKey, string rowKey, CancellationToken cancellationToken) where T : class, ITableEntity
         {
             TableOperation retrieveOperation = TableOperation.Retrieve<T>(partitionKey, rowKey);
@@ -54,7 +53,15 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
 
             TableResult result = await table.ExecuteAsync(insertOrReplaceOperation, cancellationToken);
         }
-        #endregion
 
+        public async Task DeleteAsync<T>(string partitionKey, string rowKey, CancellationToken cancellationToken)
+            where T : class, ITableEntity
+        {
+            var obj = await GetAsync<T>(partitionKey, rowKey, cancellationToken);
+
+            TableOperation deleteOperation = TableOperation.Delete(obj);
+            await table.ExecuteAsync(deleteOperation, cancellationToken);
+        }
+        
     }
 }

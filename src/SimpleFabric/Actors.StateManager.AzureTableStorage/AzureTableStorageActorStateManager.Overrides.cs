@@ -10,7 +10,7 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
 {
     public partial class AzureTableStorageActorStateManager
     {
-        
+
         public async override Task<T> AddOrUpdateStateAsync<T>(string stateName, T addValue, Func<string, T, T> updateValueFactory, CancellationToken cancellationToken = default(CancellationToken))
         {
             var state = await base.AddOrUpdateStateAsync<T>(stateName, addValue, updateValueFactory, cancellationToken);
@@ -113,34 +113,60 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
             tableData.RowKey = stateName;
             tableData.SerializeObject(value);
             await UpdateAsync(tableData, cancellationToken);
-            await base.SetStateAsync<T>(stateName, value, cancellationToken);
-            return;
+            await base.SetStateAsync(stateName, value, cancellationToken);            
         }
 
         public override Task<IEnumerable<string>> GetStateNamesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             throw new NotImplementedException();
+            //return await base.GetStateNamesAsync(cancellationToken);
         }
 
-        public override Task RemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        public async override Task RemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            await DeleteAsync<TableStorageDataWrapper>(PartitionKey, stateName, cancellationToken);
+            await base.RemoveStateAsync(stateName, cancellationToken);
         }
 
-        public override Task<bool> TryAddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
+        public async override Task<bool> TryAddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            var tableData = new TableStorageDataWrapper();
+            tableData.PartitionKey = PartitionKey;
+            tableData.RowKey = stateName;
+            tableData.SerializeObject(value);
+            await UpdateAsync(tableData, cancellationToken);
+            return await base.TryAddStateAsync(stateName, value, cancellationToken);
         }
 
-        public override Task<ConditionalValue<T>> TryGetStateAsync<T>(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        public async override Task<ConditionalValue<T>> TryGetStateAsync<T>(string stateName, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            var localState = await base.TryGetStateAsync<T>(stateName, cancellationToken);
+            if (localState.HasValue)
+            {
+                return localState;
+            }
+            else
+            {
+                var remoteState = await GetAsync<TableStorageDataWrapper>(PartitionKey, stateName, cancellationToken);
+                if (remoteState == null)
+                {
+                    return new ConditionalValue<T>();
+                }
+                else
+                {
+                    var t_localState = remoteState.DeserializeObject<T>();
+                    var conditionalValue = new ConditionalValue<T>(true, t_localState);
+                    await base.SetStateAsync(stateName, t_localState);
+                    return conditionalValue;
+                }
+            }
         }
 
-        public override Task<bool> TryRemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        public async override Task<bool> TryRemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
-        }        
-                
+            await DeleteAsync<TableStorageDataWrapper>(PartitionKey, stateName, cancellationToken);
+            return await base.TryRemoveStateAsync(stateName, cancellationToken);
+        }
+
     }
 }
