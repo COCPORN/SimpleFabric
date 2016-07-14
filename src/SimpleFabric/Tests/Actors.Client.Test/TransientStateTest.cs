@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpleFabric.Actors;
 using SimpleFabric.Actors.Client;
+using SimpleFabric.Actors.Implementation;
 using SimpleFabric.Actors.Runtime;
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,21 @@ namespace Actors.Client.Test
         }
     }
 
+  
+
     [TestClass]
     public class TransientStateTest
     {
+        [TestInitialize]
+        public void Initialize()
+        {
+            Actor.StateManagerCreator = () =>
+            {
+                return new InMemoryActorStateManager();
+            };
+        }
+
+
         [TestMethod]
         public async Task TestTransientStateAndRegistryLookup()
         {

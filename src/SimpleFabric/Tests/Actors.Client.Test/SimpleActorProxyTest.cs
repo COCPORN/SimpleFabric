@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SimpleFabric.Actors;
 using SimpleFabric.Actors.Client;
 using SimpleFabric.Actors.Runtime;
+using SimpleFabric.Actors.Implementation;
 
 namespace Actors.Client.Test
 {
@@ -62,10 +63,21 @@ namespace Actors.Client.Test
         }
     }
 
-  
+
+
     [TestClass]
     public class SimpleActorProxyTest
     {
+        [TestInitialize]
+        public void Initialize()
+        {
+            Actor.StateManagerCreator = () =>
+            {
+                return new InMemoryActorStateManager();
+            };
+        }
+
+
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestUnimplementedActor()

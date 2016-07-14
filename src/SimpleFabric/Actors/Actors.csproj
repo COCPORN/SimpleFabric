@@ -42,7 +42,9 @@
   <ItemGroup>
     <Compile Include="ActorId.cs" />
     <Compile Include="ActorIdKind.cs" />
+    <Compile Include="ActorStateManagerKind.cs" />
     <Compile Include="IActor.cs" />
+    <Compile Include="Implementation\InMemoryActorStateManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Actor.cs" />
     <Compile Include="Runtime\ActorBase.cs" />

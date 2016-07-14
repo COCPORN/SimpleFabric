@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpleFabric.Actors;
 using SimpleFabric.Actors.Client;
+using SimpleFabric.Actors.Implementation;
+using SimpleFabric.Actors.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,15 @@ namespace Actors.Client.Test
     [TestClass]
     public class InMemoryRegistryTest
     {
+        [TestInitialize]
+        public void Initialize()
+        {
+            Actor.StateManagerCreator = () =>
+            {
+                return new InMemoryActorStateManager();
+            };
+        }
+
         /// <summary>
         /// This test shows that actors with the same id in different applications
         /// are treated as different actors

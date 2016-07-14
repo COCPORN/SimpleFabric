@@ -8,7 +8,14 @@ namespace SimpleFabric.Actors.Runtime
 {
     public abstract class Actor : ActorBase
     {
-        protected Actor() { }
+        protected Actor() {
+            if (StateManagerCreator == null)
+            {
+                throw new InvalidOperationException("Unable to create actor without StateManagerCreator set");
+            }
+        }
+
+        public static Func<IActorStateManager> StateManagerCreator { get; set; }
 
         //
         // Summary:
