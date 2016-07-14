@@ -50,6 +50,7 @@
     <Compile Include="Runtime\ActorBase.cs" />
     <Compile Include="Runtime\ActorCallType.cs" />
     <Compile Include="Runtime\ActorMethodContext.cs" />
+    <Compile Include="Runtime\IActorAwareStateManager.cs" />
     <Compile Include="Runtime\IActorReminder.cs" />
     <Compile Include="Runtime\IActorStateManager.cs" />
     <Compile Include="Runtime\IActorTimer.cs" />
