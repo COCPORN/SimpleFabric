@@ -28,6 +28,12 @@ namespace SimpleFabric.Actors
         }
         #endregion
 
+        #region Get Keys
+        public Guid GetGuidId() { return guidId; }
+        public long GetLongId() { return longId; }
+        public string GetStringId() { return stringId; }
+        #endregion
+
         public ActorIdKind ActorIdKind { get; }
 
         /// <summary>
