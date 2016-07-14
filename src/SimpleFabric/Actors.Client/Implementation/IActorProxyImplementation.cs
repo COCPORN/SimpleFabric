@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SimpleFabric.Actors.Client.Implementation
 {
-    interface IActorProxyImplementation
+    public interface IActorProxyImplementation
     {
         ActorId ActorId { get; set; }
         string ApplicationName { get; set; }
