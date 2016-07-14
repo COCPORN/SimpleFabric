@@ -8,7 +8,8 @@ namespace SimpleFabric.Actors.Client.Implementation
 {
     class ProxyFactory
     {
-        public static ActorProxyType ActorProxyType { get; set; } = ActorProxyType.InMemoryActorProxy;
+        public static ActorProxyType ActorProxyType { get; set; } 
+                                = ActorProxyType.InMemoryActorProxy;
 
         public static IActorProxyImplementation CreateProxy<T>()
         {

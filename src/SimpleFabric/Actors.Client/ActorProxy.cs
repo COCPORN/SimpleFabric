@@ -27,6 +27,8 @@ namespace SimpleFabric.Actors.Client
             set { ProxyFactory.ActorProxyType = value; }
         }
 
+        public static Func<IActorProxyImplementation> StateManagerCreator { get; set; }
+
         public static T Create<T>(ActorId actorId, string applicationName = null) where T : class
         {
             if (typeof(T).IsInterface == false)
@@ -34,7 +36,16 @@ namespace SimpleFabric.Actors.Client
                 throw new ArgumentException("T must be an interface");
             }
 
-            var proxy = ProxyFactory.CreateProxy<T>();
+            IActorProxyImplementation proxy;
+
+            if (StateManagerCreator == null) 
+            {
+                proxy = ProxyFactory.CreateProxy<T>();
+            } 
+            else 
+            {
+                proxy = StateManagerCreator();
+            }
 
             proxy.ActorId = actorId;
             proxy.ApplicationName = applicationName;
