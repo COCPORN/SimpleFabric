@@ -17,7 +17,7 @@ namespace SimpleFabric.Actors.Client.Implementation
         IActor actor;
 
         public void Initialize()
-        {                      
+        {
             bool actorExists;
             lock (actorRegistry)
             {
@@ -33,10 +33,10 @@ namespace SimpleFabric.Actors.Client.Implementation
                 {
                     var typesToCreate = AppDomain.CurrentDomain.GetAssemblies()
                             .SelectMany(s => s.GetTypes())
-                            .Where(p => type.IsAssignableFrom(p) 
-                                        && p.IsClass 
-                                        && !p.IsAbstract 
-                                        && !p.IsInterface 
+                            .Where(p => type.IsAssignableFrom(p)
+                                        && p.IsClass
+                                        && !p.IsAbstract
+                                        && !p.IsInterface
                                         && p.IsSubclassOf(typeof(Actor)));
                     var createCount = typesToCreate.Count();
 
@@ -45,6 +45,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                         throw new InvalidOperationException("The type " 
                         	+ type.Name + " has no implementation");
                     }
+                    
                     if (createCount > 1)
                     {
                         throw new InvalidOperationException("The interface " 
@@ -52,7 +53,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                         	" has multiple implementations and instantiation is ambiguous." + 
                         	" Make sure there is a single implementation in the current AppDomain");
                     }
-                    
+
                     typeToCreate = typesToCreate.Single();
 
                     interfaceMapping.Add(type, typeToCreate);                    
@@ -63,14 +64,14 @@ namespace SimpleFabric.Actors.Client.Implementation
                 CreateActor(typeToCreate, out iactor, out cactor);
 
                 cactor.Id = ActorId;
-                lock (actorRegistry) 
+                lock (actorRegistry)
                 {
-			actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), iactor);
-	         }
+                    actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), iactor);
+                }
                 actor = iactor;
             }
         }
-        
+
 
         private static void CreateActor(Type typeToCreate, out IActor iactor, out Actor cactor)
         {
@@ -95,7 +96,7 @@ namespace SimpleFabric.Actors.Client.Implementation
         static Dictionary<Tuple<ActorId, string>, IActor> actorRegistry = new Dictionary<Tuple<ActorId, string>, IActor>();
 
         #region Locking
-        
+
         // Because locking and unlocking are potentially
         // done on separate threads, these are implemented
         // with a cross thread event
@@ -119,7 +120,7 @@ namespace SimpleFabric.Actors.Client.Implementation
         {
             try
             {
-                
+
                 var method = actor.GetType().GetMethod(binder.Name);
 
 #if false
@@ -152,10 +153,10 @@ namespace SimpleFabric.Actors.Client.Implementation
                 return true;
             }
             catch
-            {                
+            {
                 result = null;
                 return false;
-            }            
+            }
         }
     }
 }
