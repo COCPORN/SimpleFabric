@@ -9,6 +9,7 @@ using SimpleFabric.Actors.Implementation;
 using System.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using SimpleFabric.Data;
 
 namespace SimpleFabric.Actors.StateManager.AzureTableStorage
 {
@@ -223,6 +224,31 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
             await UpdateAsync(tableData, cancellationToken);
             await base.SetStateAsync<T>(stateName, value, cancellationToken);
             return;
+        }
+
+        public override Task<IEnumerable<string>> GetStateNamesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task RemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> TryAddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<ConditionalValue<T>> TryGetStateAsync<T>(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> TryRemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
         }
         #endregion
 
