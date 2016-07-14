@@ -27,7 +27,7 @@ namespace SimpleFabric.Actors.Client
             set { ProxyFactory.ActorProxyType = value; }
         }
 
-        public static Func<IActorProxyImplementation> StateManagerCreator { get; set; }
+        public static Func<IActorProxyImplementation> ActorProxyCreator { get; set; }
 
         public static T Create<T>(ActorId actorId, string applicationName = null) where T : class
         {
@@ -38,13 +38,13 @@ namespace SimpleFabric.Actors.Client
 
             IActorProxyImplementation proxy;
 
-            if (StateManagerCreator == null) 
+            if (ActorProxyCreator == null) 
             {
                 proxy = ProxyFactory.CreateProxy<T>();
             } 
             else 
             {
-                proxy = StateManagerCreator();
+                proxy = ActorProxyCreator();
             }
 
             proxy.ActorId = actorId;
