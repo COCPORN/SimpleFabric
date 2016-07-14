@@ -17,50 +17,55 @@ namespace SimpleFabric.Actors.Client.Implementation
         IActor actor;
 
         public void Initialize()
-        {          
-            // TODO: This is gross and ineffient, rewrite locking 
+        {                      
+            bool actorExists;
             lock (actorRegistry)
             {
-                if (actorRegistry.TryGetValue(Tuple.Create(ActorId, ApplicationName), out actor) == false)
+                actorExists = actorRegistry.TryGetValue(Tuple.Create(ActorId, ApplicationName), out actor);
+            }
+            if (actorExists == false)
+            {
+                // Create new actor instance and add it to registry
+                var type = typeof(T);
+                Type createType = null;
+
+                if (interfaceMapping.TryGetValue(type, out createType) == false)
                 {
-                    // Create new actor instance and add it to registry
-                    var type = typeof(T);
-                    Type createType = null;
+                    var typeToCreate = AppDomain.CurrentDomain.GetAssemblies()
+                            .SelectMany(s => s.GetTypes())
+                            .Where(p => type.IsAssignableFrom(p) 
+                                        && p.IsClass 
+                                        && !p.IsAbstract 
+                                        && !p.IsInterface 
+                                        && p.IsSubclassOf(typeof(Actor)));
+                    var createCount = typeToCreate.Count();
 
-                    if (interfaceMapping.TryGetValue(type, out createType) == false)
+                    if (createCount == 0)
                     {
-                        var typeToCreate = AppDomain.CurrentDomain.GetAssemblies()
-                                .SelectMany(s => s.GetTypes())
-                                .Where(p => type.IsAssignableFrom(p) 
-                                            && p.IsClass 
-                                            && !p.IsAbstract 
-                                            && !p.IsInterface 
-                                            && p.IsSubclassOf(typeof(Actor)));
-                        var createCount = typeToCreate.Count();
-
-                        if (createCount == 0)
-                        {
-                            throw new InvalidOperationException("The type " + type.Name + " has no implementation");
-                        }
-                        if (createCount > 1)
-                        {
-                            throw new InvalidOperationException("The interface " + type.Name + " has multiple implementations and instantiation is ambiguous. Make sure there is a single implementation in the current AppDomain");
-                        }
-                        
-                        interfaceMapping.Add(type, typeToCreate.Single());
-                        createType = typeToCreate.First();
+                        throw new InvalidOperationException("The type " + type.Name + " has no implementation");
                     }
-
-                    IActor iactor;
-                    Actor cactor;
-                    CreateActor(createType, out iactor, out cactor);
-
-                    cactor.Id = ActorId;
-                    actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), iactor);
-                    actor = iactor;
+                    if (createCount > 1)
+                    {
+                        throw new InvalidOperationException("The interface " + type.Name + " has multiple implementations and instantiation is ambiguous. Make sure there is a single implementation in the current AppDomain");
+                    }
+                    
+                    interfaceMapping.Add(type, typeToCreate.Single());
+                    createType = typeToCreate.First();
                 }
+
+                IActor iactor;
+                Actor cactor;
+                CreateActor(createType, out iactor, out cactor);
+
+                cactor.Id = ActorId;
+                lock (actorRegistry) 
+                {
+			actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), iactor);
+	         }
+                actor = iactor;
             }
         }
+        
 
         private static void CreateActor(Type createType, out IActor iactor, out Actor cactor)
         {
