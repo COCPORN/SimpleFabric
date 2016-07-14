@@ -35,14 +35,18 @@ namespace SimpleFabric.Actors.Client.Implementation
                                             && !p.IsAbstract 
                                             && !p.IsInterface 
                                             && p.IsSubclassOf(typeof(Actor)));
-                        if (typeToCreate.Count() == 0)
+                        var createCount = typeToCreate.Count();
+
+                        if (createCount == 0)
                         {
                             throw new InvalidOperationException("The type " + type.Name + " has no implementation");
                         }
-
-
-
-                        interfaceMapping.Add(type, typeToCreate.First());
+                        if (createCount > 1)
+                        {
+                            throw new InvalidOperationException("The interface " + type.Name + " has multiple implementations and instantiation is ambiguous. Make sure there is a single implementation in the current AppDomain");
+                        }
+                        
+                        interfaceMapping.Add(type, typeToCreate.Single());
                         createType = typeToCreate.First();
                     }
 

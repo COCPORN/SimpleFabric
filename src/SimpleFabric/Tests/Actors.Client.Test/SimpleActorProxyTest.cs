@@ -18,11 +18,18 @@ namespace Actors.Client.Test
     /// from IActor
     /// </summary>
     public interface IBadInterface { }
-    
+
     /// <summary>
     /// So this implementation won't help
     /// </summary>
     public class TestBadInterface : IBadInterface { }
+
+    /// <summary>
+    /// Check that ambiguous instantiation doesn't work
+    /// </summary>
+    public interface IMultiInterface { }
+    public class MultiInterface1 : Actor, IMultiInterface { }
+    public class MultiInterface2 : Actor, IMultiInterface { }
 
     /// <summary>
     /// This is a well-formed actor interface
@@ -71,6 +78,13 @@ namespace Actors.Client.Test
         public void TestInterfaceMissingIActorMarkerInterface()
         {
             var badInterface = ActorProxy.Create<IBadInterface>(new ActorId("Test"));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestMultipleImplementation()
+        {
+            var badActor = ActorProxy.Create<IMultiInterface>(new ActorId("Multi"));
         }
 
         [TestMethod]
