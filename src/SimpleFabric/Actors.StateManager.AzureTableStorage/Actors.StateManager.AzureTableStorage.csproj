@@ -72,6 +72,7 @@
     <Compile Include="AzureTableStorageActorStateManager.cs" />
     <Compile Include="PartitionKeyCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TableStorageDataWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Actors\Actors.csproj">

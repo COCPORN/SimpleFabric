@@ -1,7 +1,7 @@
 ﻿using System;
 using SimpleFabric.Actors.Runtime;
 
-namespace Actors.StateManager.AzureTableStorage
+namespace SimpleFabric.Actors.StateManager.AzureTableStorage
 {
     class PartitionKeyCreator
     {
