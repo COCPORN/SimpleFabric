@@ -13,7 +13,7 @@ namespace SimpleFabric.Actors.Implementation
     {
         Dictionary<string, object> state = new Dictionary<string, object>();
 
-        public Task<T> AddOrUpdateStateAsync<T>(string stateName, T addValue, Func<string, T, T> updateValueFactory, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<T> AddOrUpdateStateAsync<T>(string stateName, T addValue, Func<string, T, T> updateValueFactory, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             object value;
@@ -29,20 +29,20 @@ namespace SimpleFabric.Actors.Implementation
             return Task.FromResult((T)state[stateName]);
         }
 
-        public Task AddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task AddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             state.Add(stateName, value);
             return Task.FromResult(false);
         }
 
-        public Task<bool> ContainsStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<bool> ContainsStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             return Task.FromResult(state.ContainsKey(stateName));
         }
 
-        public Task<T> GetOrAddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<T> GetOrAddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             if (state.ContainsKey(stateName))
@@ -56,30 +56,30 @@ namespace SimpleFabric.Actors.Implementation
             }
         }
 
-        public Task<T> GetStateAsync<T>(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<T> GetStateAsync<T>(string stateName, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             return Task.FromResult((T)state[stateName]);
         }
 
-        public Task<IEnumerable<string>> GetStateNamesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<IEnumerable<string>> GetStateNamesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             return Task.FromResult(state.Keys.ToList().AsEnumerable());
         }
 
-        public Task ClearCacheAsync(CancellationToken cancellationToken = new CancellationToken())
+        public virtual Task ClearCacheAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             throw new NotImplementedException();
         }
 
-        public Task RemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task RemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             state.Remove(stateName);
             return Task.FromResult(false);
         }
 
-        public Task SetStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task SetStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             state.Remove(stateName);
@@ -89,7 +89,7 @@ namespace SimpleFabric.Actors.Implementation
 
         // TODO: I am not sure this is semantically correctly implemented, as the documentation page
         // for TryAddStateAsync says approximately nothing about how this is supposed to work
-        public Task<bool> TryAddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<bool> TryAddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             if (state.ContainsKey(stateName) == false)
@@ -103,7 +103,7 @@ namespace SimpleFabric.Actors.Implementation
             }
         }
 
-        public Task<ConditionalValue<T>> TryGetStateAsync<T>(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<ConditionalValue<T>> TryGetStateAsync<T>(string stateName, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             object value;
@@ -118,7 +118,7 @@ namespace SimpleFabric.Actors.Implementation
             }
         }
 
-        public Task<bool> TryRemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<bool> TryRemoveStateAsync(string stateName, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             if (state.ContainsKey(stateName))
