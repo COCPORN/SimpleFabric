@@ -27,9 +27,11 @@ namespace SimpleFabric.Actors
             ActorIdKind = ActorIdKind.String;
         }
 
+        // Generate random long
+        // http://stackoverflow.com/questions/6651554/random-number-in-long-range-is-this-the-way
         static void EnsureMinLEQMax(ref long min, ref long max)
         {
-            if(min <= max)
+            if (min <= max)
                 return;
             long temp = min;
             min = max;
@@ -46,7 +48,7 @@ namespace SimpleFabric.Actors
         {
             long mod;
             Math.DivRem(dividend, divisor, out mod);
-            if(mod < 0)
+            if (mod < 0)
                 mod += divisor;
             return mod;
         }
@@ -54,7 +56,7 @@ namespace SimpleFabric.Actors
         public static long RandomLong()
         {
             byte[] buffer = new byte[8];
-            rnd.NextBytes (buffer);
+            rnd.NextBytes(buffer);
             return BitConverter.ToInt64(buffer, 0);
         }
 
