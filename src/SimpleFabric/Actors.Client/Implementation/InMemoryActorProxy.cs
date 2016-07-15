@@ -107,8 +107,14 @@ namespace SimpleFabric.Actors.Client.Implementation
             }
         }
 
+		// TODO: Having this as a static field like this doesn't make sense,
+		// it can just as well be a single static field, as the lookup will
+		// be done on type
         static Dictionary<Type, Type> interfaceMapping = 
                             new Dictionary<Type, Type>();
+
+		// This, however, makes sense to have in a static type, as it will
+		// just limit the lookup of actors to the current type, which is fine
         static Dictionary<Tuple<ActorId, string>, IActor> actorRegistry = 
                             new Dictionary<Tuple<ActorId, string>, IActor>();
 
