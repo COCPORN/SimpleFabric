@@ -131,7 +131,7 @@ namespace SimpleFabric.Actors.Client.Implementation
 
         // TODO: This method needs to honor service fabric reentrancy rules, this implementation
         // is naive and will easily cause deadlocks
-        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+        public async override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
             try
             {
@@ -149,6 +149,15 @@ namespace SimpleFabric.Actors.Client.Implementation
 
                 // "lock" the actor
                 Lock();
+
+                // Pre-call
+                var methodContext = new ActorMethodContext 
+                {
+                    CallType = ActorCallType.ActorInterfaceMethod,
+                    MethodName = binder.Name
+                };
+                await actor.OnPreActorMethodAsync(methodContext);
+
                 result = method.Invoke(actor, args);
 
                 var task = result as Task;
@@ -160,8 +169,10 @@ namespace SimpleFabric.Actors.Client.Implementation
                     throw new InvalidOperationException("All interface methods must be Task or Task<T>");
                 }
 
-                task.ContinueWith((_) =>
+                task.ContinueWith(async (_) =>
                 {
+                    // Post-call
+                    await actor.OnPostActorMethodAsync(methodContext);
                     Unlock();
                 });
 
