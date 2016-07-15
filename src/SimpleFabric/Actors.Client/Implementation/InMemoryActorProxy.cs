@@ -39,8 +39,8 @@ namespace SimpleFabric.Actors.Client.Implementation
                             .SelectMany(s => s.GetTypes())
                             .Where(p => type.IsAssignableFrom(p)
                                         && p.IsClass
-                                        && !p.IsAbstract
-                                        && !p.IsInterface
+                                        && p.IsAbstract == false
+                                        && p.IsInterface == false
                                         && p.IsSubclassOf(typeof(Actor)));
                     var createCount = typesToCreate.Count();
 
@@ -142,17 +142,7 @@ namespace SimpleFabric.Actors.Client.Implementation
         {
             try
             {
-
                 var method = iActor.GetType().GetMethod(binder.Name);
-
-#if false
-                // For some reason this doesn't work for Task with generic
-                if (method.ReturnType != typeof(Task) 
-                    && method.ReturnType != typeof(Task<>))
-                {
-                    throw new InvalidOperationException("All interface methods must be Task or Task<T>");
-                }
-#endif
 
                 // "lock" the actor
                 Lock();
@@ -161,7 +151,7 @@ namespace SimpleFabric.Actors.Client.Implementation
 				var methodContext = new ActorMethodContext(ActorCallType.ActorInterfaceMethod,
 														   binder.Name);
                 
-                var preTask = concreteActor.OnPreActorMethodAsync(methodContext);                                
+                var preTask = concreteActor.OnPreActorMethodAsync(methodContext);             
                 preTask.Wait();
                 
                 result = method.Invoke(iActor, args);
