@@ -14,7 +14,7 @@ namespace SimpleFabric.Actors.Client.Implementation
     {
         public ActorId ActorId { get; set; }
         public string ApplicationName { get; set; }
-        IActor actor;
+        IActor iActor;
 		Actor concreteActor;
 
         public void Initialize()
@@ -24,7 +24,8 @@ namespace SimpleFabric.Actors.Client.Implementation
             {
                 actorExists = actorRegistry
                               .TryGetValue(Tuple.Create(ActorId, ApplicationName), 
-                                           out actor);
+                                           out concreteActor);
+                iActor = concreteActor as IActor;
             }
             if (actorExists == false)
             {
@@ -71,9 +72,9 @@ namespace SimpleFabric.Actors.Client.Implementation
                 
                 lock (actorRegistry)
                 {
-                    actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), iactor);
+                    actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), cactor);
                 }
-                actor = iactor;
+                iActor = iactor;
             }
         }
 
@@ -115,8 +116,8 @@ namespace SimpleFabric.Actors.Client.Implementation
 
 		// This, however, makes sense to have in a static type, as it will
 		// just limit the lookup of actors to the current type, which is fine
-        static Dictionary<Tuple<ActorId, string>, IActor> actorRegistry = 
-                            new Dictionary<Tuple<ActorId, string>, IActor>();
+        static Dictionary<Tuple<ActorId, string>, Actor> actorRegistry = 
+                            new Dictionary<Tuple<ActorId, string>, Actor>();
 
         #region Locking
 
@@ -144,7 +145,7 @@ namespace SimpleFabric.Actors.Client.Implementation
             try
             {
 
-                var method = actor.GetType().GetMethod(binder.Name);
+                var method = iActor.GetType().GetMethod(binder.Name);
 
 #if false
                 // For some reason this doesn't work for Task with generic
@@ -162,11 +163,10 @@ namespace SimpleFabric.Actors.Client.Implementation
 				var methodContext = new ActorMethodContext(ActorCallType.ActorInterfaceMethod,
 														   binder.Name);
                 
-                var preTask = concreteActor.OnPreActorMethodAsync(methodContext);
-                preTask.Start();
+                var preTask = concreteActor.OnPreActorMethodAsync(methodContext);                                
                 preTask.Wait();
                 
-                result = method.Invoke(actor, args);
+                result = method.Invoke(iActor, args);
 
                 var task = result as Task;
                 if (task == null)
@@ -186,7 +186,7 @@ namespace SimpleFabric.Actors.Client.Implementation
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 result = null;
                 return false;
