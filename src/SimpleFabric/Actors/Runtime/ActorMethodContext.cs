@@ -14,6 +14,13 @@ namespace SimpleFabric.Actors.Runtime
     //     and Microsoft.ServiceFabric.Actors.Runtime.ActorBase.OnPostActorMethodAsync(Microsoft.ServiceFabric.Actors.Runtime.ActorMethodContext).
     public struct ActorMethodContext
     {
+
+        public ActorMethodContext(ActorCallType callType, string methodName) 
+        {
+            CallType = callType;
+            MethodName = methodName;
+        }
+
         //
         // Summary:
         //     Type of call by actor runtime (e.g. actor interface method, timer callback etc.).

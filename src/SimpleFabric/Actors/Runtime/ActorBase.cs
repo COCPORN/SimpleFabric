@@ -57,7 +57,7 @@ namespace SimpleFabric.Actors.Runtime
         //
         // Returns:
         //     A System.Threading.Tasks.Task that represents outstanding OnActivateAsync operation.
-        public virtual Task OnActivateAsync() {  }
+        public virtual async Task OnActivateAsync() {  }
         //
         // Summary:
         //     Override this method to release any resources including unregistering the timers.
@@ -65,7 +65,7 @@ namespace SimpleFabric.Actors.Runtime
         //
         // Returns:
         //     A System.Threading.Tasks.Task that represents outstanding OnDeactivateAsync operation.
-        public virtual Task OnDeactivateAsync() {  }
+        public virtual async Task OnDeactivateAsync() {  }
         //
         // Summary:
         //     This method is invoked by actor runtime an actor method has finished execution.
@@ -84,7 +84,7 @@ namespace SimpleFabric.Actors.Runtime
         //     This method is invoked by actor runtime prior to: Invoking an actor interface
         //     method when a client request comes. Invoking a method on Microsoft.ServiceFabric.Actors.Runtime.IRemindable
         //     interface when a reminder fires. Invoking a timer callback when timer fires.
-        public virtual Task OnPostActorMethodAsync(ActorMethodContext actorMethodContext) { }
+        public virtual async Task OnPostActorMethodAsync(ActorMethodContext actorMethodContext) { }
         //
         // Summary:
         //     This method is invoked by actor runtime just before invoking an actor method.
@@ -102,7 +102,7 @@ namespace SimpleFabric.Actors.Runtime
         //     This method is invoked by actor runtime prior to: Invoking an actor interface
         //     method when a client request comes. Invoking a method on Microsoft.ServiceFabric.Actors.Runtime.IRemindable
         //     interface when a reminder fires. Invoking a timer callback when timer fires.
-        public virtual Task OnPreActorMethodAsync(ActorMethodContext actorMethodContext) { }
+        public virtual async Task OnPreActorMethodAsync(ActorMethodContext actorMethodContext) { }
         //
         // Summary:
         //     Registers the specified reminder with actor.

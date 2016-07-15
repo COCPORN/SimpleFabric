@@ -15,6 +15,7 @@ namespace SimpleFabric.Actors.Client.Implementation
         public ActorId ActorId { get; set; }
         public string ApplicationName { get; set; }
         IActor actor;
+		Actor concreteActor;
 
         public void Initialize()
         {
@@ -65,6 +66,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                 Actor cactor;
 
                 CreateActor(typeToCreate, out iactor, out cactor);
+				concreteActor = cactor;
                 ActivateActor(cactor);
                 
                 lock (actorRegistry)
@@ -131,7 +133,7 @@ namespace SimpleFabric.Actors.Client.Implementation
 
         // TODO: This method needs to honor service fabric reentrancy rules, this implementation
         // is naive and will easily cause deadlocks
-        public async override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
             try
             {
@@ -150,14 +152,14 @@ namespace SimpleFabric.Actors.Client.Implementation
                 // "lock" the actor
                 Lock();
 
-                // Pre-call
-                var methodContext = new ActorMethodContext 
-                {
-                    CallType = ActorCallType.ActorInterfaceMethod,
-                    MethodName = binder.Name
-                };
-                await actor.OnPreActorMethodAsync(methodContext);
-
+				// Pre-call
+				var methodContext = new ActorMethodContext(ActorCallType.ActorInterfaceMethod,
+														   binder.Name);
+                
+                var preTask = concreteActor.OnPreActorMethodAsync(methodContext);
+                preTask.Start();
+                preTask.Wait();
+                
                 result = method.Invoke(actor, args);
 
                 var task = result as Task;
@@ -172,9 +174,9 @@ namespace SimpleFabric.Actors.Client.Implementation
                 task.ContinueWith(async (_) =>
                 {
                     // Post-call
-                    await actor.OnPostActorMethodAsync(methodContext);
+                    await concreteActor.OnPostActorMethodAsync(methodContext);
                     Unlock();
-                });
+                });                
 
                 return true;
             }
