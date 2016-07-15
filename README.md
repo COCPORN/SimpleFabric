@@ -38,3 +38,11 @@ Actor.StateManagerCreator =
 ## Current state
 
 The state of the library is _highly experimental_. I'll start using it for production work for stuff that is _not mission critical_ any minute, but I urge you not to. 
+
+### Priority
+
+- Actors (started)    
+    - State in Azure Table Storage (started)
+    - State stored to local disk
+- Stateless Services
+- Stateful Services
