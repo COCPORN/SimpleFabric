@@ -81,9 +81,30 @@ namespace SimpleFabric.Actors
         #endregion
 
         #region Get Keys
-        public Guid GetGuidId() { return guidId; }
-        public long GetLongId() { return longId; }
-        public string GetStringId() { return stringId; }
+        public Guid GetGuidId() 
+        {   
+            if (ActorIdKind == ActorIdKind.Guid)
+            {
+                return guidId;
+            } else throw new InvalidOperationException("This is not a Guid Id"); 
+        }
+
+        public long GetLongId() 
+        {
+            if (ActorIdKind == ActorIdKind.Long)
+            { 
+                return longId;
+            } else throw new InvalidOperationException("This is not a long id");
+        }
+
+        public string GetStringId() 
+        {
+            if (ActorIdKind == ActorIdKind.String) 
+            {
+                return stringId;
+            } else throw new InvalidOperationException("This is not a string id");
+             
+        }
         #endregion
 
 		public ActorIdKind ActorIdKind { get; private set; }
