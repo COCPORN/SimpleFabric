@@ -27,13 +27,55 @@ namespace SimpleFabric.Actors
             ActorIdKind = ActorIdKind.String;
         }
 
-        static Random rand = new Random();
+        static void EnsureMinLEQMax(ref long min, ref long max)
+        {
+            if(min <= max)
+                return;
+            long temp = min;
+            min = max;
+            max = temp;
+        }
+
+        static bool IsModuloBiased(long randomOffset, long numbersInRange)
+        {
+            long greatestCompleteRange = numbersInRange * (long.MaxValue / numbersInRange);
+            return randomOffset > greatestCompleteRange;
+        }
+
+        static long PositiveModuloOrZero(long dividend, long divisor)
+        {
+            long mod;
+            Math.DivRem(dividend, divisor, out mod);
+            if(mod < 0)
+                mod += divisor;
+            return mod;
+        }
+
+        public static long RandomLong()
+        {
+            byte[] buffer = new byte[8];
+            rnd.NextBytes (buffer);
+            return BitConverter.ToInt64(buffer, 0);
+        }
+
+        public static long RandomLong(long min, long max)
+        {
+            EnsureMinLEQMax(ref min, ref max);
+            long numbersInRange = unchecked(max - min + 1);
+            if (numbersInRange < 0)
+                throw new ArgumentException("Size of range between min and max must be less than or equal to Int64.MaxValue");
+
+            long randomOffset = RandomLong();
+            if (IsModuloBiased(randomOffset, numbersInRange))
+                return RandomLong(min, max); // Try again
+            else
+                return min + PositiveModuloOrZero(randomOffset, numbersInRange);
+        }
+
+        static Random rnd = new Random();
         public void CreateRandom() 
         {
-            long result = rand.Next((Int32)(Int32.MinValue >> 32), (Int32)(Int32.MaxValue >> 32));
-            result = (result << 32);
-            result = result | (long)rand.Next((Int32)Int32.MinValue, (Int32)Int32.MaxValue);
-            longId = result;
+            longId = RandomLong(long.MinValue, long.MaxValue);
             ActorIdKind = ActorIdKind.Long;
         }
         #endregion
