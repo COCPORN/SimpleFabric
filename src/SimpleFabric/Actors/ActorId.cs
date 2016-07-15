@@ -26,6 +26,16 @@ namespace SimpleFabric.Actors
             stringId = id;
             ActorIdKind = ActorIdKind.String;
         }
+
+        static Random rand = new Random();
+        public void CreateRandom() 
+        {
+            long result = rand.Next((Int32)(Int32.MinValue >> 32), (Int32)(Int32.MaxValue >> 32));
+            result = (result << 32);
+            result = result | (long)rand.Next((Int32)Int32.MinValue, (Int32)Int32.MaxValue);
+            longId = result;
+            ActorIdKind = ActorIdKind.Long;
+        }
         #endregion
 
         #region Get Keys
@@ -34,7 +44,7 @@ namespace SimpleFabric.Actors
         public string GetStringId() { return stringId; }
         #endregion
 
-        public ActorIdKind ActorIdKind { get; }
+		public ActorIdKind ActorIdKind { get; private set; }
 
         /// <summary>
         /// I have no idea how to implement this correctly
