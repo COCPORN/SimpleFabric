@@ -33,7 +33,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                 var type = typeof(T);
                 Type typeToCreate = null;
 
-                if (interfaceMapping.TryGetValue(type, out typeToCreate) == false)
+                if (interfaceMapping == null) 
                 {
                     var typesToCreate = AppDomain.CurrentDomain.GetAssemblies()
                             .SelectMany(s => s.GetTypes())
@@ -60,7 +60,9 @@ namespace SimpleFabric.Actors.Client.Implementation
 
                     typeToCreate = typesToCreate.Single();
 
-                    interfaceMapping.Add(type, typeToCreate);                    
+                    interfaceMapping = typeToCreate;                    
+                } else {
+                    typeToCreate = interfaceMapping;
                 }
 
                 IActor iactor;
@@ -107,12 +109,8 @@ namespace SimpleFabric.Actors.Client.Implementation
                 throw new InvalidOperationException("The actor class needs to derive from the SimpleFabric.Actors.Runtime.Actor class");
             }
         }
-
-		// TODO: Having this as a static field like this doesn't make sense,
-		// it can just as well be a single static field, as the lookup will
-		// be done on type
-        static Dictionary<Type, Type> interfaceMapping = 
-                            new Dictionary<Type, Type>();
+		
+        static Type interfaceMapping;
 
 		// This, however, makes sense to have in a static type, as it will
 		// just limit the lookup of actors to the current type, which is fine
