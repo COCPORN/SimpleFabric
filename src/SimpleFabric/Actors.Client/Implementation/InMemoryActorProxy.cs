@@ -21,7 +21,9 @@ namespace SimpleFabric.Actors.Client.Implementation
             bool actorExists;
             lock (actorRegistry)
             {
-                actorExists = actorRegistry.TryGetValue(Tuple.Create(ActorId, ApplicationName), out actor);
+                actorExists = actorRegistry
+                              .TryGetValue(Tuple.Create(ActorId, ApplicationName), 
+                                           out actor);
             }
             if (actorExists == false)
             {
@@ -61,9 +63,10 @@ namespace SimpleFabric.Actors.Client.Implementation
 
                 IActor iactor;
                 Actor cactor;
-                CreateActor(typeToCreate, out iactor, out cactor);
 
-                cactor.Id = ActorId;
+                CreateActor(typeToCreate, out iactor, out cactor);
+                ActivateActor(cactor);
+                
                 lock (actorRegistry)
                 {
                     actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), iactor);
@@ -72,6 +75,16 @@ namespace SimpleFabric.Actors.Client.Implementation
             }
         }
 
+        async void ActivateActor(Actor actor) 
+        {
+            actor.Id = ActorId;
+            await actor.OnActivateAsync();
+        }
+
+        async void DeactivateActor(Actor actor) 
+        {
+            await actor.OnDeactivateAsync();
+        }
 
         private static void CreateActor(Type typeToCreate, out IActor iactor, out Actor cactor)
         {
@@ -92,8 +105,10 @@ namespace SimpleFabric.Actors.Client.Implementation
             }
         }
 
-        static Dictionary<Type, Type> interfaceMapping = new Dictionary<Type, Type>();
-        static Dictionary<Tuple<ActorId, string>, IActor> actorRegistry = new Dictionary<Tuple<ActorId, string>, IActor>();
+        static Dictionary<Type, Type> interfaceMapping = 
+                            new Dictionary<Type, Type>();
+        static Dictionary<Tuple<ActorId, string>, IActor> actorRegistry = 
+                            new Dictionary<Tuple<ActorId, string>, IActor>();
 
         #region Locking
 

@@ -57,7 +57,7 @@ namespace SimpleFabric.Actors.Runtime
         //
         // Returns:
         //     A System.Threading.Tasks.Task that represents outstanding OnActivateAsync operation.
-        protected virtual Task OnActivateAsync() { throw new NotImplementedException(); }
+        protected virtual Task OnActivateAsync() {  }
         //
         // Summary:
         //     Override this method to release any resources including unregistering the timers.
@@ -65,7 +65,7 @@ namespace SimpleFabric.Actors.Runtime
         //
         // Returns:
         //     A System.Threading.Tasks.Task that represents outstanding OnDeactivateAsync operation.
-        protected virtual Task OnDeactivateAsync() { throw new NotImplementedException(); }
+        protected virtual Task OnDeactivateAsync() {  }
         //
         // Summary:
         //     This method is invoked by actor runtime an actor method has finished execution.
