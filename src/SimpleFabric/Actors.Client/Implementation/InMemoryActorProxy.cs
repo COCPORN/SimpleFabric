@@ -39,8 +39,8 @@ namespace SimpleFabric.Actors.Client.Implementation
                             .SelectMany(s => s.GetTypes())
                             .Where(p => type.IsAssignableFrom(p)
                                         && p.IsClass
-                                        && !p.IsAbstract
-                                        && !p.IsInterface
+                                        && p.IsAbstract == false
+                                        && p.IsInterface == false
                                         && p.IsSubclassOf(typeof(Actor)));
                     var createCount = typesToCreate.Count();
 
