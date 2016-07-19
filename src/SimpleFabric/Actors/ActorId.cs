@@ -137,6 +137,7 @@ namespace SimpleFabric.Actors
 
         public bool Equals(ActorId other)
         {
+            if (other == null) return false;
             if (ActorIdKind != other.ActorIdKind) return false;
             switch (ActorIdKind)
             {
@@ -154,7 +155,7 @@ namespace SimpleFabric.Actors
         public override bool Equals(object obj)
         {
             if (obj is ActorId == false) return false;
-            return Equals(obj as ActorId);
+            return Equals((ActorId)obj);
         }
 
         public override int GetHashCode()
@@ -180,12 +181,15 @@ namespace SimpleFabric.Actors
 
         public static bool operator ==(ActorId x, ActorId y)
         {
+            if (ReferenceEquals(x, y)) return true;
+            if (((object)x == null) && ((object)y == null)) return true;
+            if (((object)x == null) || ((object)y == null)) return false;
             return x.Equals(y);
         }
 
         public static bool operator !=(ActorId x, ActorId y)
         {
-            return !x.Equals(y);
+            return (x == y) == false;
         }
     }
 }
