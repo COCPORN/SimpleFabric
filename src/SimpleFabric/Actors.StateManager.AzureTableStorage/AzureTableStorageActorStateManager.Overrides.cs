@@ -11,15 +11,33 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
     public partial class AzureTableStorageActorStateManager
     {
 
+        // TODO: This can be made faster by checking the in-memory store first
         public async override Task<T> AddOrUpdateStateAsync<T>(string stateName, T addValue, Func<string, T, T> updateValueFactory, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var state = await base.AddOrUpdateStateAsync<T>(stateName, addValue, updateValueFactory, cancellationToken);
-            var tableData = new TableStorageDataWrapper();
-            tableData.PartitionKey = PartitionKey;
-            tableData.RowKey = stateName;
-            tableData.SerializeObject(state);
-            await UpsertAsync(tableData, cancellationToken);
-            return state;
+            var tableData = await GetAsync<TableStorageDataWrapper>(PartitionKey, stateName, cancellationToken);
+            if (tableData == null)
+            {
+                tableData = new TableStorageDataWrapper();
+                tableData.PartitionKey = PartitionKey;
+                tableData.RowKey = stateName;
+                tableData.SerializeObject(addValue);
+                await base.SetStateAsync(stateName, addValue, cancellationToken);
+                await UpsertAsync(tableData, cancellationToken);
+                return addValue;
+            } else
+            {
+                var state = tableData.DeserializeObject<T>();
+                var newState = updateValueFactory(stateName, state);
+                var updateData = new TableStorageDataWrapper();
+                updateData.PartitionKey = PartitionKey;
+                updateData.RowKey = stateName;
+                updateData.SerializeObject(newState);
+                await UpdateAsync(updateData, cancellationToken);
+                await base.SetStateAsync(stateName, newState);
+                return newState;
+            }
+            
+       
         }
 
         public async override Task AddStateAsync<T>(string stateName, T value, CancellationToken cancellationToken = default(CancellationToken))
