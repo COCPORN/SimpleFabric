@@ -24,11 +24,11 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
     /// </summary>
     public partial class AzureTableStorageActorStateManager : InMemoryActorStateManager, IActorAwareStateManager
     {
-        string tableStorageConnection;
-        string tableStorageTable;
+        public static string TableStorageConnection { get; set; }
+        public static string TableStorageTable { get; set; }
 
         protected CloudStorageAccount account;
-        protected CloudTableClient client;
+        static protected CloudTableClient client;
         protected CloudTable table;
 
         public Actor Actor { get; set; }
@@ -48,25 +48,42 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
 
         public void Initialize()
         {
+            if (client != null && table != null) return;
+
             GetConfiguration();
-            tableStorageTable.Replace("{{actorTypeName}}", Actor.GetType().Name);
 
-            if (ConfigurationManager.ConnectionStrings["SimpleFabric.AzureTableStorage.Connection"] == null)
-                throw new ConfigurationErrorsException("Missing SimpleFabric.AzureTableStorage.Connection AppSetting");
+            if (Actor == null)
+            {
+                throw new InvalidOperationException("Actor has not been set, cannot continue");
+            }
+            
+            if (client == null)
+            {
+                if (string.IsNullOrEmpty(TableStorageConnection))
+                {
+                    if (ConfigurationManager.ConnectionStrings["SimpleFabric.AzureTableStorage.Connection"] == null)
+                        throw new ConfigurationErrorsException("Missing SimpleFabric.AzureTableStorage.Connection AppSetting");
 
-            var connectionString = ConfigurationManager.ConnectionStrings["SimpleFabric.AzureTableStorage.Connection"].ConnectionString;
-            account = CloudStorageAccount.Parse(connectionString);
-            client = account.CreateCloudTableClient();
+                    TableStorageConnection = ConfigurationManager.ConnectionStrings["SimpleFabric.AzureTableStorage.Connection"].ConnectionString;
+                }
+                account = CloudStorageAccount.Parse(TableStorageConnection);
+                client = account.CreateCloudTableClient();
+            }
 
-            table = client.GetTableReference(tableStorageTable);
-            table.CreateIfNotExists();
+            if (table == null)
+            {
+                TableStorageTable.Replace("{{actorTypeName}}", Actor.GetType().Name);
+                table = client.GetTableReference(TableStorageTable);
+                table.CreateIfNotExists();
+            }                        
         }
 
         private void GetConfiguration()
         {
-            tableStorageTable = ConfigurationManager.AppSettings["AzureTableStorage.Table"];
+            if (string.IsNullOrEmpty(TableStorageTable))
+                TableStorageTable = ConfigurationManager.AppSettings["AzureTableStorage.Table"];
 
-            if (tableStorageTable == null)
+            if (TableStorageTable == null)
             {
                 throw new ConfigurationErrorsException("Missing configuration key SimpleFabric.AzureTableStorage.Table");
             }

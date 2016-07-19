@@ -15,7 +15,7 @@ namespace SimpleFabric.Actors.Client.Implementation
         public ActorId ActorId { get; set; }
         public string ApplicationName { get; set; }
         IActor iActor;
-		Actor concreteActor;
+        Actor concreteActor;
 
         public void Initialize()
         {
@@ -23,7 +23,7 @@ namespace SimpleFabric.Actors.Client.Implementation
             lock (actorRegistry)
             {
                 actorExists = actorRegistry
-                              .TryGetValue(Tuple.Create(ActorId, ApplicationName), 
+                              .TryGetValue(Tuple.Create(ActorId, ApplicationName),
                                            out concreteActor);
                 iActor = concreteActor as IActor;
             }
@@ -33,7 +33,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                 var type = typeof(T);
                 Type typeToCreate = null;
 
-                if (interfaceMapping == null) 
+                if (interfaceMapping == null)
                 {
                     var typesToCreate = AppDomain.CurrentDomain.GetAssemblies()
                             .SelectMany(s => s.GetTypes())
@@ -46,22 +46,24 @@ namespace SimpleFabric.Actors.Client.Implementation
 
                     if (createCount == 0)
                     {
-                        throw new InvalidOperationException("The type " 
-                        	+ type.Name + " has no implementation");
+                        throw new InvalidOperationException("The type "
+                            + type.Name + " has no implementation");
                     }
-                    
+
                     if (createCount > 1)
                     {
-                        throw new InvalidOperationException("The interface " 
-                        	+ type.Name + 
-                        	" has multiple implementations and instantiation is ambiguous." + 
-                        	" Make sure there is a single implementation in the current AppDomain");
+                        throw new InvalidOperationException("The interface "
+                            + type.Name +
+                            " has multiple implementations and instantiation is ambiguous." +
+                            " Make sure there is a single implementation in the current AppDomain");
                     }
 
                     typeToCreate = typesToCreate.Single();
 
-                    interfaceMapping = typeToCreate;                    
-                } else {
+                    interfaceMapping = typeToCreate;
+                }
+                else
+                {
                     typeToCreate = interfaceMapping;
                 }
 
@@ -69,9 +71,9 @@ namespace SimpleFabric.Actors.Client.Implementation
                 Actor cactor;
 
                 CreateActor(typeToCreate, out iactor, out cactor);
-				concreteActor = cactor;
+                concreteActor = cactor;
                 ActivateActor(cactor);
-                
+
                 lock (actorRegistry)
                 {
                     actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), cactor);
@@ -80,13 +82,13 @@ namespace SimpleFabric.Actors.Client.Implementation
             }
         }
 
-        async void ActivateActor(Actor actor) 
+        async void ActivateActor(Actor actor)
         {
             actor.Id = ActorId;
             await actor.OnActivateAsync();
         }
 
-        async void DeactivateActor(Actor actor) 
+        async void DeactivateActor(Actor actor)
         {
             await actor.OnDeactivateAsync();
         }
@@ -97,9 +99,10 @@ namespace SimpleFabric.Actors.Client.Implementation
 
             iactor = t_actor as IActor;
             cactor = t_actor as Actor;
-            if (t_actor == null) {
-	            throw new InvalidOperationException("Internal error: Failed to create Actor");
-	        }
+            if (t_actor == null)
+            {
+                throw new InvalidOperationException("Internal error: Failed to create Actor");
+            }
             if (iactor == null)
             {
                 throw new InvalidOperationException("The actor class needs to implement IActor-interface");
@@ -109,12 +112,12 @@ namespace SimpleFabric.Actors.Client.Implementation
                 throw new InvalidOperationException("The actor class needs to derive from the SimpleFabric.Actors.Runtime.Actor class");
             }
         }
-		
+
         static Type interfaceMapping;
 
-		// This, however, makes sense to have in a static type, as it will
-		// just limit the lookup of actors to the current type, which is fine
-        static Dictionary<Tuple<ActorId, string>, Actor> actorRegistry = 
+        // This, however, makes sense to have in a static type, as it will
+        // just limit the lookup of actors to the current type, which is fine
+        static Dictionary<Tuple<ActorId, string>, Actor> actorRegistry =
                             new Dictionary<Tuple<ActorId, string>, Actor>();
 
         #region Locking
@@ -153,7 +156,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                 
                 var preTask = concreteActor.OnPreActorMethodAsync(methodContext);             
                 preTask.Wait();
-                
+
                 result = method.Invoke(iActor, args);
 
                 var task = result as Task;
@@ -170,7 +173,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                     // Post-call
                     await concreteActor.OnPostActorMethodAsync(methodContext);
                     Unlock();
-                });                
+                });
 
                 return true;
             }
