@@ -24,8 +24,8 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
     /// </summary>
     public partial class AzureTableStorageActorStateManager : InMemoryActorStateManager, IActorAwareStateManager
     {
-        public string TableStorageConnection { get; set; }
-        public string TableStorageTable { get; set; }
+        public static string TableStorageConnection { get; set; }
+        public static string TableStorageTable { get; set; }
 
         protected CloudStorageAccount account;
         static protected CloudTableClient client;
@@ -56,8 +56,7 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
             {
                 throw new InvalidOperationException("Actor has not been set, cannot continue");
             }
-
-
+            
             if (client == null)
             {
                 if (string.IsNullOrEmpty(TableStorageConnection))
