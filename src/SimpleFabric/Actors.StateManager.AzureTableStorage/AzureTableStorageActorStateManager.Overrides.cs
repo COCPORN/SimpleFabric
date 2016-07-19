@@ -108,12 +108,12 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
             {
                 return await base.GetStateAsync<T>(stateName, cancellationToken);
             }
-            catch (IndexOutOfRangeException)
+            catch (KeyNotFoundException)
             {
                 var remoteState = await GetAsync<TableStorageDataWrapper>(PartitionKey, stateName, cancellationToken);
                 if (remoteState == null)
                 {
-                    throw new IndexOutOfRangeException();
+                    throw new KeyNotFoundException();
                 }
                 else
                 {
