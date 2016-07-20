@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>SimpleFabric</id>
+    <version>0.0.1</version>
+    <title>SimpleFabric</title>
+    <authors>COCPORN</authors>
+    <owners>COCPORN</owners>    
+    <projectUrl>http://github.com/COCPORN/SimpleFabric</projectUrl>    
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Simple library implementing Microsoft Service Fabric-like programming model</description>
+    <releaseNotes>Initial release, recommend you stay far away from this library for now</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>ServiceFabric Actors</tags>
+  </metadata>
+</package>
