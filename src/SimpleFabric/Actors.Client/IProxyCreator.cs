@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleFabric.Actors.Client.Implementation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace SimpleFabric.Actors.Client
 {
-    public enum ActorProxyType
+    public interface IProxyCreator
     {
-        InMemoryActorProxy
+        IActorProxyImplementation Create<T>(); 
     }
 }

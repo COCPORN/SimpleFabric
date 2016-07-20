@@ -21,13 +21,7 @@ namespace SimpleFabric.Actors.Client
 
     public abstract class ActorProxy
     {
-        public static ActorProxyType ActorProxyType
-        {
-            get { return ProxyFactory.ActorProxyType; }
-            set { ProxyFactory.ActorProxyType = value; }
-        }
-
-        public static Func<IActorProxyImplementation> ActorProxyCreator { get; set; }
+        public static IProxyCreator ActorProxyCreator { get; set; } = new InMemoryActorProxyCreator();
 
         public static T Create<T>(ActorId actorId, string applicationName = null) where T : class
         {
@@ -36,16 +30,7 @@ namespace SimpleFabric.Actors.Client
                 throw new ArgumentException("T must be an interface");
             }
 
-            IActorProxyImplementation proxy;
-
-            if (ActorProxyCreator == null) 
-            {
-                proxy = ProxyFactory.CreateProxy<T>();
-            } 
-            else 
-            {
-                proxy = ActorProxyCreator();
-            }
+            IActorProxyImplementation proxy = ActorProxyCreator.Create<T>();
 
             proxy.ActorId = actorId;
             proxy.ApplicationName = applicationName;
