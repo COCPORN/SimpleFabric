@@ -194,8 +194,13 @@ namespace SimpleFabric.Actors.Client.Implementation
                 task.ContinueWith(async (_) =>
                 {
                     // Post-call
-                    await concreteActor.OnPostActorMethodAsync(methodContext);
-                    Unlock();
+                    try
+                    {
+                        await concreteActor.OnPostActorMethodAsync(methodContext);
+                    }
+                    finally {
+                        Unlock();
+                    }                    
                 });
 
                 return true;
