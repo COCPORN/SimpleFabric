@@ -20,9 +20,19 @@ namespace SimpleFabric.Actors.Runtime
                 awareStateManager.Actor = this;
                 awareStateManager.Initialize();
             }
-        }
+        }        
 
         public static Func<IActorStateManager> StateManagerCreator { get; set; }
+
+        public async Task ActivateActor()
+        {
+            await OnDeactivateAsync();
+        }
+
+        public async Task DeactivateActor()
+        {
+            await OnActivateAsync();
+        }
 
         //
         // Summary:

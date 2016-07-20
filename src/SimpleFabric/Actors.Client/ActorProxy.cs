@@ -49,7 +49,16 @@ namespace SimpleFabric.Actors.Client
 
             proxy.ActorId = actorId;
             proxy.ApplicationName = applicationName;
-            proxy.Initialize();
+
+            try
+            {
+                proxy.Initialize().Wait();
+            }
+            catch (AggregateException ae)
+            {
+                throw ae.InnerException;
+            }
+
             return proxy.ActLike<T>();
         }
 

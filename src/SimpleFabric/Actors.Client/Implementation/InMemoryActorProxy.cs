@@ -1,5 +1,6 @@
 ﻿using SimpleFabric.Actors;
 using SimpleFabric.Actors.Runtime;
+using SimpleFabric.Collections;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -16,15 +17,20 @@ namespace SimpleFabric.Actors.Client.Implementation
         public string ApplicationName { get; set; }
         IActor iActor;
         Actor concreteActor;
+        ActorWrapper<T> wrappedActor;
+        static TimeoutHandler<ActorId, ActorWrapper<T>> timeoutHandler = new TimeoutHandler<ActorId, ActorWrapper<T>>();
 
-        public void Initialize()
+        public static int ActorLifetime { get; set; } = 30 * 60 * 1000; // Default to 30 minutes
+
+        public async Task Initialize()
         {
-            bool actorExists;
+            bool actorExists;            
             lock (actorRegistry)
             {
                 actorExists = actorRegistry
                               .TryGetValue(Tuple.Create(ActorId, ApplicationName),
-                                           out concreteActor);
+                                           out wrappedActor);
+                concreteActor = wrappedActor?.Actor;
                 iActor = concreteActor as IActor;
             }
             if (actorExists == false)
@@ -35,65 +41,74 @@ namespace SimpleFabric.Actors.Client.Implementation
 
                 if (interfaceMapping == null)
                 {
-                    var typesToCreate = AppDomain.CurrentDomain.GetAssemblies()
-                            .SelectMany(s => s.GetTypes())
-                            .Where(p => type.IsAssignableFrom(p)
-                                        && p.IsClass
-                                        && p.IsAbstract == false
-                                        && p.IsInterface == false
-                                        && p.IsSubclassOf(typeof(Actor)));
-                    var createCount = typesToCreate.Count();
-
-                    if (createCount == 0)
-                    {
-                        throw new InvalidOperationException("The type "
-                            + type.Name + " has no implementation");
-                    }
-
-                    if (createCount > 1)
-                    {
-                        throw new InvalidOperationException("The interface "
-                            + type.Name +
-                            " has multiple implementations and instantiation is ambiguous." +
-                            " Make sure there is a single implementation in the current AppDomain");
-                    }
-
-                    typeToCreate = typesToCreate.Single();
-
-                    interfaceMapping = typeToCreate;
+                    typeToCreate = CreateInterfaceMapping(type);
                 }
                 else
                 {
                     typeToCreate = interfaceMapping;
                 }
 
-                IActor iactor;
-                Actor cactor;
+                CreateActor(typeToCreate, out iActor, out concreteActor);
 
-                CreateActor(typeToCreate, out iactor, out cactor);
-                concreteActor = cactor;
-                ActivateActor(cactor);
+                await concreteActor.ActivateActor();
+                wrappedActor = new ActorWrapper<T>(concreteActor, this);                
+                timeoutHandler.Timeout(wrappedActor, ActorLifetime);
 
                 lock (actorRegistry)
                 {
-                    actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), cactor);
+                    actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), wrappedActor);
                 }
-                iActor = iactor;
             }
-        }
+        }        
 
-        async void ActivateActor(Actor actor)
+        private static Type CreateInterfaceMapping(Type type)
         {
-            actor.Id = ActorId;
-            await actor.OnActivateAsync();
-        }
+            Type typeToCreate;
+            var typesToCreate = AppDomain.CurrentDomain.GetAssemblies()
+                                            .SelectMany(s => s.GetTypes())
+                                            .Where(p => type.IsAssignableFrom(p)
+                                            && p.IsClass
+                                            && p.IsAbstract == false
+                                            && p.IsInterface == false
+                                            && p.IsSubclassOf(typeof(Actor)));
 
-        async void DeactivateActor(Actor actor)
+            var createCount = typesToCreate.Count();
+
+            if (createCount == 0)
+            {
+                throw new InvalidOperationException("The type "
+                    + type.Name + " has no implementation");
+            }
+
+            if (createCount > 1)
+            {
+                throw new InvalidOperationException("The interface "
+                    + type.Name +
+                    " has multiple implementations and instantiation is ambiguous." +
+                    " Make sure there is a single implementation in the current AppDomain");
+            }
+
+            typeToCreate = typesToCreate.Single();
+
+            interfaceMapping = typeToCreate;
+            return typeToCreate;
+        }
+     
+        Tuple<ActorId, string> CreateKey()
         {
-            await actor.OnDeactivateAsync();
+            return Tuple.Create(concreteActor.Id, ApplicationName);
         }
 
-        private static void CreateActor(Type typeToCreate, out IActor iactor, out Actor cactor)
+        public async Task RemoveActor()
+        {
+            lock (actorRegistry)
+            {
+                actorRegistry.Remove(CreateKey());
+            }
+            await concreteActor.DeactivateActor();
+        }
+
+        void CreateActor(Type typeToCreate, out IActor iactor, out Actor cactor)
         {
             var t_actor = Activator.CreateInstance(typeToCreate);
 
@@ -111,14 +126,16 @@ namespace SimpleFabric.Actors.Client.Implementation
             {
                 throw new InvalidOperationException("The actor class needs to derive from the SimpleFabric.Actors.Runtime.Actor class");
             }
+
+            cactor.Id = ActorId;
         }
 
         static Type interfaceMapping;
 
         // This, however, makes sense to have in a static type, as it will
         // just limit the lookup of actors to the current type, which is fine
-        static Dictionary<Tuple<ActorId, string>, Actor> actorRegistry =
-                            new Dictionary<Tuple<ActorId, string>, Actor>();
+        static Dictionary<Tuple<ActorId, string>, ActorWrapper<T>> actorRegistry =
+                            new Dictionary<Tuple<ActorId, string>, ActorWrapper<T>>();
 
         #region Locking
 
@@ -150,11 +167,11 @@ namespace SimpleFabric.Actors.Client.Implementation
                 // "lock" the actor
                 Lock();
 
-				// Pre-call
-				var methodContext = new ActorMethodContext(ActorCallType.ActorInterfaceMethod,
-														   binder.Name);
-                
-                var preTask = concreteActor.OnPreActorMethodAsync(methodContext);             
+                // Pre-call
+                var methodContext = new ActorMethodContext(ActorCallType.ActorInterfaceMethod,
+                                                           binder.Name);
+
+                var preTask = concreteActor.OnPreActorMethodAsync(methodContext);
                 preTask.Wait();
 
                 result = method.Invoke(iActor, args);
@@ -167,6 +184,8 @@ namespace SimpleFabric.Actors.Client.Implementation
                     Unlock();
                     throw new InvalidOperationException("All interface methods must be Task or Task<T>");
                 }
+
+                timeoutHandler.UpdateTimeout(concreteActor.Id, wrappedActor, ActorLifetime);
 
                 task.ContinueWith(async (_) =>
                 {

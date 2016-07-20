@@ -11,6 +11,6 @@ namespace SimpleFabric.Actors.Client.Implementation
     {
         ActorId ActorId { get; set; }
         string ApplicationName { get; set; }
-        void Initialize();
+        Task Initialize();
     }
 }

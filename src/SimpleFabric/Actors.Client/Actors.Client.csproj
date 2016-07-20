@@ -46,7 +46,11 @@
   <ItemGroup>
     <Compile Include="ActorProxy.cs" />
     <Compile Include="ActorProxyType.cs" />
+    <Compile Include="Implementation\ActorWrapper.cs" />
     <Compile Include="Implementation\IActorProxyImplementation.cs" />
+    <Compile Include="Implementation\IExpiring.cs" />
+    <Compile Include="Implementation\INow.cs" />
+    <Compile Include="Implementation\TimeoutHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Implementation\InMemoryActorProxy.cs" />
     <Compile Include="Implementation\ProxyFactory.cs" />
