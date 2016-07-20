@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>SimpleFabric.Actors.StateManager.AzureTableStorage</id>
+    <version>0.0.1</version>
+    <title>SimpleFabric.Actors.StateManager.AzureTableStorage</title>
+    <authors>COCPORN</authors>
+    <owners>COCPORN</owners>    
+    <projectUrl>http://github.com/COCPORN/SimpleFabric</projectUrl>    
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A StateManager for Actors based on Azure Table Storage</description>
+    <releaseNotes>Initial packaging</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>ServiceFabric Actors</tags>
+  </metadata>
+</package>
