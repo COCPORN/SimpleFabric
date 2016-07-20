@@ -15,6 +15,7 @@ namespace Actors.Client.Test
     {
         Task Increment();
         Task<int> GetValue();
+        Task<bool> GetActive();
     }
 
     public class IncrementActor : Actor, IIncrementActor
@@ -30,6 +31,19 @@ namespace Actors.Client.Test
         {
             i++;
             return Task.FromResult(true);
+        }
+
+        public bool Deactivated { get; set; } = false;
+
+        protected override Task OnDeactivateAsync()
+        {
+            Deactivated = true;
+            return base.OnDeactivateAsync();
+        }
+
+        public Task<bool> GetActive()
+        {
+            return Task.FromResult(Deactivated == false);
         }
     }
 

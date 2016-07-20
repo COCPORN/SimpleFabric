@@ -26,12 +26,12 @@ namespace SimpleFabric.Actors.Runtime
 
         public async Task ActivateActor()
         {
-            await OnDeactivateAsync();
+            await OnActivateAsync();
         }
 
         public async Task DeactivateActor()
         {
-            await OnActivateAsync();
+            await OnDeactivateAsync();
         }
 
         //

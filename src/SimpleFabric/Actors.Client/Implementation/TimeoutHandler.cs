@@ -45,11 +45,9 @@ namespace SimpleFabric.Collections
 
                 // Because you can't change a set of data while iterating over it, copy out values
                 var removeKeys = new List<Int64>();
-
-
+                
                 lock (sortedItems)
                 {
-
                     // Assume we want to wait indefinitely. This is what will happen with an empty
                     // sequence
                     waitmilliseconds = -1;

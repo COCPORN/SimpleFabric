@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SimpleFabric.Actors.Client.Implementation
 {
-    public class InMemoryActorProxy<T> : DynamicObject, IActor, IActorProxyImplementation
+    public class InMemoryActorProxy<T> : InMemoryActorProxyBase, IActor, IActorProxyImplementation
     {
         public ActorId ActorId { get; set; }
         public string ApplicationName { get; set; }
@@ -19,8 +19,12 @@ namespace SimpleFabric.Actors.Client.Implementation
         Actor concreteActor;
         ActorWrapper<T> wrappedActor;
         static TimeoutHandler<ActorId, ActorWrapper<T>> timeoutHandler = new TimeoutHandler<ActorId, ActorWrapper<T>>();
-
-        public static int ActorLifetime { get; set; } = 30 * 60 * 1000; // Default to 30 minutes
+        
+        public static new int ActorLifetime
+        {
+            get { return InMemoryActorProxyBase.ActorLifetime; }
+            set { InMemoryActorProxyBase.ActorLifetime = value;  }
+        }
 
         public async Task Initialize()
         {
