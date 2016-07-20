@@ -51,6 +51,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ActorLifetimeTests.cs" />
+    <Compile Include="ActorOfState.cs" />
     <Compile Include="InMemoryActorStateManagerTest.cs" />
     <Compile Include="InMemoryRegistryTest.cs" />
     <Compile Include="SimpleActorProxyTest.cs" />
