@@ -48,5 +48,6 @@ The state of the library is _highly experimental_. I'll start using it for produ
     - State stored to local disk (not started)
 	- Timers (not started)
 	- Events (not started)
+    - Network transparency in proxy using NetMQ (not started)
 - Stateless Services
 - Stateful Services
