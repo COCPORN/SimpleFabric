@@ -42,7 +42,10 @@ The state of the library is _highly experimental_. I'll start using it for produ
 ### Priority
 
 - Actors (started)    
+	- Actor lifetime (Activation, Deactivation, KeepAlive on requests)
+		- Actor activation and deactivation
     - State in Azure Table Storage (started)
     - State stored to local disk
+	- Timers
 - Stateless Services
 - Stateful Services
