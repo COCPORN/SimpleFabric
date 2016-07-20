@@ -70,6 +70,8 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
         {
             var obj = await GetAsync<T>(partitionKey, rowKey, cancellationToken);
 
+            if (obj == null) return;
+
             TableOperation deleteOperation = TableOperation.Delete(obj);
             await table.ExecuteAsync(deleteOperation, cancellationToken);
         }
