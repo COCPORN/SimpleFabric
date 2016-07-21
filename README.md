@@ -35,14 +35,14 @@ The state of the library is _highly experimental_. I'll start using it for produ
 
 ### Priority
 
-- Actors (started)    
-	- Actor lifetime (Activation, Deactivation, KeepAlive on requests)
-		- Actor activation and deactivation
-    - State in Azure Table Storage (started)
-	- Timers (started)
+- Actors (started with tests)    
+	- Actor lifetime (Activation, Deactivation, KeepAlive on requests, there are some tests)
+		- Actor activation and deactivation (started with tests)
+    - State in Azure Table Storage (started, there are some tests in a separate repo (because of Azure keys))
+	- Timers (started, tehre are some tests)
     - State stored to local disk (not started)
 	- Reminders
-	- Events (not started)
+	- Events (started in Feature-Events, seems really hard to implement for me at this point)
     - Network transparency in proxy using NetMQ (not started)
 - Stateless Services
 - Stateful Services
