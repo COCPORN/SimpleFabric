@@ -10,13 +10,7 @@ Some of this setup will deviate heavily from Microsoft Service Fabric, as the pu
 
 ### Configuring the `ActorProxy`
 
-You can select which kind of `ActorProxy` should be created. It defaults to the `InMemoryActorProxy`, which keeps a registry in process. While it is implicitly set to the default actor proxy, you could configure it by:
-
-```
-ActorProxy.ActorProxyType = ActorProxyType.InMemoryActorProxy;
-```
-
-This only works for proxy types in the core library. If you implement your own proxy type or get one from another library, you can add a `ActorProxyCreator`-`Func`:
+If you implement your own proxy type or get one from another library, you can add a `ActorProxyCreator`-`Func`:
 
 ```
 ActorProxy.ActorProxyCreator = 
