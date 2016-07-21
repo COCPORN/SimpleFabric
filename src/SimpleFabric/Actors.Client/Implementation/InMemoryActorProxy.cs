@@ -13,12 +13,10 @@ namespace SimpleFabric.Actors.Client.Implementation
 {
     public class InMemoryActorProxy<T> : 
         InMemoryActorProxyBase, 
-        IActor, 
-        IActorProxyImplementation,
+        IActor,         
         ILockManager
     {
-        public ActorId ActorId { get; set; }
-        public string ApplicationName { get; set; }
+    
         IActor iActor;
         Actor concreteActor;
         ActorWrapper<T> wrappedActor;
@@ -30,7 +28,7 @@ namespace SimpleFabric.Actors.Client.Implementation
             set { InMemoryActorProxyBase.ActorLifetime = value;  }
         }
 
-        public async Task Initialize()
+        public override async Task Initialize()
         {
             bool actorExists;            
             lock (actorRegistry)
@@ -216,5 +214,7 @@ namespace SimpleFabric.Actors.Client.Implementation
                 return false;
             }
         }
+
+    
     }
 }

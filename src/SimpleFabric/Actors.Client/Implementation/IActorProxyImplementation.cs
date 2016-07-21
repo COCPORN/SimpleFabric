@@ -12,5 +12,7 @@ namespace SimpleFabric.Actors.Client.Implementation
         ActorId ActorId { get; set; }
         string ApplicationName { get; set; }
         Task Initialize();
+        Task SubscribeAsync<T>(T eventHandler);
+        
     }
 }

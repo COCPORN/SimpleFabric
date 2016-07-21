@@ -44,6 +44,8 @@
     <Compile Include="ActorIdKind.cs" />
     <Compile Include="ActorStateManagerKind.cs" />
     <Compile Include="IActor.cs" />
+    <Compile Include="IActorEvents.cs" />
+    <Compile Include="IActortEventPublisher.cs" />
     <Compile Include="ILockManager.cs" />
     <Compile Include="Implementation\InMemoryActorStateManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

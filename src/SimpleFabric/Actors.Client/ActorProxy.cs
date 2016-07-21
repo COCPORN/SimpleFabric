@@ -19,7 +19,7 @@ namespace SimpleFabric.Actors.Client
     /// 
     /// </summary>
 
-    public abstract class ActorProxy
+    public abstract class ActorProxy 
     {
         public static IProxyCreator ActorProxyCreator { get; set; } = new InMemoryActorProxyCreator();
 
@@ -44,8 +44,9 @@ namespace SimpleFabric.Actors.Client
                 throw ae.InnerException;
             }
 
-            return proxy.ActLike<T>();
+            return proxy.ActLike<T>(typeof (IEventPublisher));
         }
 
+    
     }
 }

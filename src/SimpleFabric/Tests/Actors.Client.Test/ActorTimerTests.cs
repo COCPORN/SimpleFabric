@@ -12,7 +12,12 @@ using System.Threading.Tasks;
 namespace Actors.Client.Test
 {
 
-    public interface INagger : IActor
+    public interface INaggerEvents : IActorEvents
+    {
+        void Nag(string nagMessage);
+    }
+
+    public interface INagger : IActor, IActorEventPublisher<INaggerEvents>
     {
         Task StopTimer();
         Task<int> GetNumberOfNags();
@@ -31,6 +36,8 @@ namespace Actors.Client.Test
         Task Nag(object state)
         {
             nags.Add("People who annoy you.");
+            var ev = GetEvent<INaggerEvents>();
+            ev.Nag("People who annoy you");
             return Task.FromResult(true);
         }
 
@@ -58,6 +65,21 @@ namespace Actors.Client.Test
         }
     }
 
+    public class NagHandler : INaggerEvents
+    {
+        List<string> nags = new List<string>();
+
+        public void Nag(string nagMessage)
+        {
+            nags.Add(nagMessage);
+        }
+
+        public int NagCount
+        {
+            get { return nags.Count; }
+        }
+    }
+
     [TestClass]
     public class ActorTimerTests
     {
@@ -74,8 +96,12 @@ namespace Actors.Client.Test
         [TestMethod]
         public async Task TestNagger()
         {
-            var mahNagger = ActorProxy.Create<INagger>(new ActorId("OG"));            
-            await Task.Delay(70);
+            var mahNagger = ActorProxy.Create<INagger>(new ActorId("OG"));
+
+            var nagHandler = new NagHandler();
+
+            await ((IEventPublisher)mahNagger).SubscribeAsync<INaggerEvents>(nagHandler);
+            await Task.Delay(100);
             Assert.AreEqual(1, await mahNagger.GetNumberOfNags());
             await Task.Delay(100);
             Assert.AreEqual(1, await mahNagger.GetNumberOfNags());
@@ -85,7 +111,9 @@ namespace Actors.Client.Test
             Assert.AreEqual(2, await mahNagger.GetNumberOfNags());
             await mahNagger.StopTimer();
             await Task.Delay(200);
-            Assert.AreEqual(2, await mahNagger.GetNumberOfNags());            
+            Assert.AreEqual(2, await mahNagger.GetNumberOfNags());
+
+            Assert.AreEqual(2, nagHandler.NagCount);
         }
 
     }
