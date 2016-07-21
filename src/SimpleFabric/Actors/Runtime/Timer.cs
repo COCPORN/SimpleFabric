@@ -22,6 +22,7 @@ namespace SimpleFabric.Actors.Runtime
             timer = new System.Timers.Timer(dueTime.Milliseconds);
             timer.AutoReset = true;                        
             timer.Elapsed += Timer_Elapsed;
+            timer.Start();
         }
 
         bool setToPeriodTimer = false;
@@ -54,7 +55,7 @@ namespace SimpleFabric.Actors.Runtime
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            timer.Dispose();
         }
     }
 }

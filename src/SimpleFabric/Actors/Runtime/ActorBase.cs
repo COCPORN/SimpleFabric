@@ -181,7 +181,9 @@ namespace SimpleFabric.Actors.Runtime
         // Parameters:
         //   timer:
         //     IActorTimer representing timer that needs to be unregistered..
-        protected void UnregisterTimer(IActorTimer timer) { throw new NotImplementedException(); }
+        protected void UnregisterTimer(IActorTimer timer) {
+            timer.Dispose();
+        }
 
     }
 }

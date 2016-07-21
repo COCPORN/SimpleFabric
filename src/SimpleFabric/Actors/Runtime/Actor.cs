@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleFabric.Actors.Implementation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace SimpleFabric.Actors.Runtime
         protected Actor() {
             if (StateManagerCreator == null)
             {
-                throw new InvalidOperationException("Unable to create actor without StateManagerCreator set");
+                StateManagerCreator = () => { return new InMemoryActorStateManager(); };
             }
             StateManager = StateManagerCreator();
             var awareStateManager = StateManager as IActorAwareStateManager;
