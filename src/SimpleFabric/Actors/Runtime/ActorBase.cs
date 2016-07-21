@@ -26,6 +26,11 @@ namespace SimpleFabric.Actors.Runtime
                 id = value;
             }
         }
+
+        public ILockManager LockManager
+        {
+            get; set;
+        }
         //
         // Summary:
         //     Gets the event for the specified event interface.
@@ -149,7 +154,9 @@ namespace SimpleFabric.Actors.Runtime
         //
         // Returns:
         //     Returns IActorTimer object.
-        protected IActorTimer RegisterTimer(Func<object, Task> asyncCallback, object state, TimeSpan dueTime, TimeSpan period) { throw new NotImplementedException(); }
+        protected IActorTimer RegisterTimer(Func<object, Task> asyncCallback, object state, TimeSpan dueTime, TimeSpan period) {
+            return new Timer(dueTime, period, asyncCallback, state, this);
+        }
         //
         // Summary:
         //     Unregisters the specified reminder with actor.

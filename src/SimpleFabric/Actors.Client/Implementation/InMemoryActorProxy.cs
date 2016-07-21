@@ -11,7 +11,11 @@ using System.Threading.Tasks;
 
 namespace SimpleFabric.Actors.Client.Implementation
 {
-    public class InMemoryActorProxy<T> : InMemoryActorProxyBase, IActor, IActorProxyImplementation
+    public class InMemoryActorProxy<T> : 
+        InMemoryActorProxyBase, 
+        IActor, 
+        IActorProxyImplementation,
+        ILockManager
     {
         public ActorId ActorId { get; set; }
         public string ApplicationName { get; set; }
@@ -132,6 +136,7 @@ namespace SimpleFabric.Actors.Client.Implementation
             }
 
             cactor.Id = ActorId;
+            cactor.LockManager = this;
         }
 
         static Type interfaceMapping;
@@ -149,12 +154,12 @@ namespace SimpleFabric.Actors.Client.Implementation
 
         AutoResetEvent are = new AutoResetEvent(true);
 
-        void Lock()
+        public void Lock()
         {
             are.WaitOne();
         }
 
-        void Unlock()
+        public void Unlock()
         {
             are.Set();
         }
