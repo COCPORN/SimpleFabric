@@ -19,7 +19,7 @@ namespace Actors.Client.Test
         public void Init()
         {
             // Setup actors to die rather quickly
-            InMemoryActorProxyBase.ActorLifetime = 100;
+            InMemoryActorProxyBase.ActorLifetime = 300;
             Actor.StateManagerCreator = () =>
             {
                 return new InMemoryActorStateManager();
@@ -31,7 +31,7 @@ namespace Actors.Client.Test
         {
             var actorRef1 = ActorProxy.Create<IIncrementActor>(new ActorId("Lifetime:IncrementActor"));
             Assert.AreEqual(true, await actorRef1.GetActive());
-            await Task.Delay(100);
+            await Task.Delay(300);
 
             // This might be a little odd, as we're calling a method
             // on a deactivated actor. Not sure exactly what should happen
@@ -59,7 +59,7 @@ namespace Actors.Client.Test
                 await Task.Delay(10);
             }
 
-            await Task.Delay(100);
+            await Task.Delay(300);
 
             // This might be a little odd, as we're calling a method
             // on a deactivated actor. Not sure exactly what should happen
