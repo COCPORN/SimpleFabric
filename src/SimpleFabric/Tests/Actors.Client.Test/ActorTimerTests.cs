@@ -75,7 +75,7 @@ namespace Actors.Client.Test
         public async Task TestNagger()
         {
             var mahNagger = ActorProxy.Create<INagger>(new ActorId("OG"));            
-            await Task.Delay(70);
+            await Task.Delay(100);
             Assert.AreEqual(1, await mahNagger.GetNumberOfNags());
             await Task.Delay(100);
             Assert.AreEqual(1, await mahNagger.GetNumberOfNags());
