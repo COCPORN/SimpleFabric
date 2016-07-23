@@ -2,15 +2,19 @@
 <package >
   <metadata>
     <id>SimpleFabric</id>
-    <version>0.0.2-prerelease</version>
+    <version>0.0.3-prerelease</version>
     <title>SimpleFabric</title>
     <authors>COCPORN</authors>
-    <owners>COCPORN</owners>    
-    <projectUrl>http://github.com/COCPORN/SimpleFabric</projectUrl>    
+    <owners>COCPORN</owners>
+    <projectUrl>http://github.com/COCPORN/SimpleFabric</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Simple library implementing Microsoft Service Fabric-like programming model</description>
-    <releaseNotes>Initial release, recommend you stay far away from this library for now</releaseNotes>
+    <releaseNotes>This version fixes the name of assemblies and adds dependent assemblies</releaseNotes>
     <copyright>Copyright 2016</copyright>
-    <tags>ServiceFabric Actors</tags>
+    <tags>ServiceFabric Actors</tags>  
   </metadata>
+  <files>
+    <file src="bin\Release\SimpleFabric.Data.dll" target="lib\net452" />
+    <file src="bin\Release\SimpleFabric.Actors.dll" target="lib\net452" />
+  </files>
 </package>
