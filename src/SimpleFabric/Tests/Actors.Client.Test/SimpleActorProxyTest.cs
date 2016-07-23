@@ -14,6 +14,8 @@ namespace Actors.Client.Test
     /// </summary>
     public interface IUnimplementedActor { }
 
+    public interface IUnimplementedButCorrectInterface : IActor { }
+
     /// <summary>
     /// This interface is bad, because it doesn't derive
     /// from IActor
@@ -83,6 +85,13 @@ namespace Actors.Client.Test
         public void TestUnimplementedActor()
         {
             var unimplementedActor = ActorProxy.Create<IUnimplementedActor>(new ActorId("Test"));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestUnimplementedButCorrectInterface()
+        {
+            var unimplementedActor = ActorProxy.Create<IUnimplementedButCorrectInterface>(new ActorId("Test"));
         }
 
         [TestMethod]

@@ -72,6 +72,10 @@ namespace SimpleFabric.Actors.StateManager.AzureTableStorage
 
             if (table == null)
             {
+                if (string.IsNullOrEmpty(TableStorageTable))
+                {
+                    TableStorageTable = ConfigurationManager.AppSettings["SimpleFabric.AzureTableStorage.TableName"];
+                }
                 TableStorageTable.Replace("{{actorTypeName}}", Actor.GetType().Name);
                 table = client.GetTableReference(TableStorageTable);
                 table.CreateIfNotExists();
