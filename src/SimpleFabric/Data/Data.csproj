@@ -7,8 +7,8 @@
     <ProjectGuid>{65BAA2F9-A4B1-4CFE-882A-F81AE9C93550}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Data</RootNamespace>
-    <AssemblyName>Data</AssemblyName>
+    <RootNamespace>SimpleFabric.Data</RootNamespace>
+    <AssemblyName>SimpleFabric.Data</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

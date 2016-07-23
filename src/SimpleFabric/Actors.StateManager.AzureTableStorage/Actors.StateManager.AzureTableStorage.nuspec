@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SimpleFabric.Actors.StateManager.AzureTableStorage</id>
-    <version>0.0.1</version>
+    <version>0.0.2-prerelease</version>
     <title>SimpleFabric.Actors.StateManager.AzureTableStorage</title>
     <authors>COCPORN</authors>
     <owners>COCPORN</owners>    
@@ -12,5 +12,9 @@
     <releaseNotes>Initial packaging</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>ServiceFabric Actors</tags>
+    <dependencies>
+      <dependency id="WindowsAzure.Storage" version="6.1.0" />
+      <dependency id="SimpleFabric" version="0.0.2-prerelease" />
+    </dependencies>
   </metadata>
 </package>
