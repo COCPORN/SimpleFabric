@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>SimpleFabric</id>
-    <version>0.0.3-prerelease</version>
+    <version>0.0.4-prerelease</version>
     <title>SimpleFabric</title>
     <authors>COCPORN</authors>
     <owners>COCPORN</owners>
     <projectUrl>http://github.com/COCPORN/SimpleFabric</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Simple library implementing Microsoft Service Fabric-like programming model</description>
-    <releaseNotes>This version fixes the name of assemblies and adds dependent assemblies</releaseNotes>
+    <releaseNotes>This version updates some references to newer versions of libraries</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>ServiceFabric Actors</tags>  
   </metadata>
