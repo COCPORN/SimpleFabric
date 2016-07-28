@@ -36,7 +36,7 @@ namespace SimpleFabric.Actors.Client.Implementation
             lock (actorRegistry)
             {
                 actorExists = actorRegistry
-                              .TryGetValue(Tuple.Create(ActorId, ApplicationName),
+                              .TryGetValue(Tuple.Create(ActorId, ApplicationName, typeof(T)),
                                            out wrappedActor);
                 concreteActor = wrappedActor?.Actor;
                 iActor = concreteActor as IActor;
@@ -64,7 +64,7 @@ namespace SimpleFabric.Actors.Client.Implementation
 
                 lock (actorRegistry)
                 {
-                    actorRegistry.Add(Tuple.Create(ActorId, ApplicationName), wrappedActor);
+                    actorRegistry.Add(Tuple.Create(ActorId, ApplicationName, typeof(T)), wrappedActor);
                 }
             }
         }        
@@ -102,9 +102,9 @@ namespace SimpleFabric.Actors.Client.Implementation
             return typeToCreate;
         }
      
-        Tuple<ActorId, string> CreateKey()
+        Tuple<ActorId, string, Type> CreateKey()
         {
-            return Tuple.Create(concreteActor.Id, ApplicationName);
+            return Tuple.Create(concreteActor.Id, ApplicationName, typeof(T));
         }
 
         public async Task RemoveActor()
@@ -143,8 +143,8 @@ namespace SimpleFabric.Actors.Client.Implementation
 
         // This, however, makes sense to have in a static type, as it will
         // just limit the lookup of actors to the current type, which is fine
-        static Dictionary<Tuple<ActorId, string>, ActorWrapper<T>> actorRegistry =
-                            new Dictionary<Tuple<ActorId, string>, ActorWrapper<T>>();
+        static Dictionary<Tuple<ActorId, string, Type>, ActorWrapper<T>> actorRegistry =
+                            new Dictionary<Tuple<ActorId, string, Type>, ActorWrapper<T>>();
 
         #region Locking
 
