@@ -4,16 +4,12 @@ using SimpleFabric.Actors.Client;
 using SimpleFabric.Actors.Client.Implementation;
 using SimpleFabric.Actors.Implementation;
 using SimpleFabric.Actors.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Actors.Client.Test
 {
 
-    interface IStatefulIncrementor : IActor
+    public interface IStatefulIncrementor : IActor
     {
         Task Increment();
         Task<int> GetCurrentValue();
@@ -58,6 +54,8 @@ namespace Actors.Client.Test
         {
             var actor1 = ActorProxy.Create<IStatefulIncrementor>(new ActorId("StatefulIncrementor1"));
             Assert.AreEqual(0, await actor1.GetCurrentValue());
+            await actor1.Increment();
+            Assert.AreEqual(1, await actor1.GetCurrentValue());
         }
     }
 }

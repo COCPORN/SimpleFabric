@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SimpleFabric.Actors.Runtime
 {
-    class StateProxy : DynamicObject
+    public class StateProxy : DynamicObject
     {
         public bool StateDirty { get; set; } = false;
 

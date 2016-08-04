@@ -1,33 +1,27 @@
-﻿using ImpromptuInterface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace SimpleFabric.Actors.Runtime
 {
-    public class Actor<TState> : Actor where TState : class
+    public class Actor<TState> : Actor where TState : class, new()
     {
         TState backingState = null;
-        StateProxy StateProxy { get; }
-        protected TState State = null;       
+        protected dynamic State { get; }
+       
         
         public Actor()
         {
-            backingState = StateManager.GetOrAddStateAsync<TState>("default", default(TState)).Result;
+            backingState = StateManager.GetOrAddStateAsync("default", new TState()).Result;
        
-            StateProxy = new StateProxy(backingState);
-            State = StateProxy.ActLike<TState>();
+            State = new StateProxy(backingState);            
         }
 
         public override async Task OnPostActorMethodAsync(ActorMethodContext actorMethodContext)
         {
-            if (StateProxy.StateDirty == true)
+            if (State.StateDirty == true)
             {
                 await StateManager.SetStateAsync<TState>("default", backingState);
             }
-            StateProxy.StateDirty = false;
+            State.StateDirty = false;            
             base.OnPostActorMethodAsync(actorMethodContext).Wait();
         }
 
